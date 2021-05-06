@@ -29,7 +29,7 @@ $ cat package.json
   "private": true
 }
 
-$ yarn add react react-dom react-redux
+$ yarn add react react-dom react-redux @types/react-dom
 $ yarn add -D \
     typescript \
     webpack \
@@ -78,15 +78,28 @@ Create `.eslintrc` file
 
 ```json
 {
-  "root": true,
-  "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "@typescript-eslint"
-  ],
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
-  ]
+   "root": true,
+   "parser": "@typescript-eslint/parser",
+   "plugins": [
+      "@typescript-eslint"
+   ],
+   "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+   ],
+   "rules": {
+      "quotes": [
+         "error",
+         "single",
+         {
+            "avoidEscape": true
+         }
+      ],
+      "semi": [
+         "error",
+         "always"
+      ]
+   }
 }
 ```
 
@@ -109,3 +122,65 @@ Add manual command for running the linter in `package.json`
 ```
 "lint:ts": "eslint src --ext .ts,.tsx"
 ```
+
+## Setting up Jest and React Testing
+
+Add dependencies
+
+```
+yarn add -D \
+    jest \
+    @types/jest \
+    babel-jest \
+    @babel/core \
+    @babel/preset-env \
+    @babel/preset-typescript \
+    @babel/plugin-syntax-jsx \
+    @babel/preset-react \
+    @testing-library/react
+```
+
+Configure test run task in `package.json`
+
+```
+    "test": "jest"
+```
+
+Create `babel.config.json`
+
+```json
+{
+   "presets": [
+      [
+         "@babel/preset-env",
+         {
+            "targets": {
+               "node": "current"
+            }
+         }
+      ],
+      "@babel/typescript",
+      "@babel/preset-react"
+   ],
+   "plugins": [
+      "@babel/plugin-syntax-jsx"
+   ]
+}
+```
+
+## Writing your first component
+
+1. Convert your `index.ts` to `index.tsx`
+1. Render your component at the root, e.g.
+   ```
+   ReactDOM.render(
+       <Joke text="Chuck Norris once won a game of connect four in 3 moves." />,
+       document.getElementById('root')
+   )
+   ```
+1. Write the jest test at `src/components/__tests__/joke.spec.tsx`, it will be detected by jest automatically.
+1. Create your `src/components/joke.tsx` to match your specification.
+
+## Writing your first network access
+
+TODO

@@ -4,9 +4,11 @@
     "noImplicitAny": true,
     "module": "es6",
     "target": "es5",
-    "allowJs": true
+    "allowJs": true,
+    "jsx": "react",
+    "moduleResolution": "node"
   },
   "files": [
-    "src/index.ts"
+    "src/index.tsx"
   ]
 }
