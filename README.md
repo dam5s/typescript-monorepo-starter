@@ -1,7 +1,11 @@
 # React Redux Starter
 
-Some base instructions that I followed -
-https://github.com/yakkomajuri/react-from-scratch
+## Some external guides
+
+* https://survivejs.com/
+* https://github.com/yakkomajuri/react-from-scratch
+
+## Initial setup
 
 ```
 $ node --version
@@ -50,14 +54,58 @@ $ npx webpack init
 
 Now edit `package.json` to restore your project name and version.
 
-Fix the CSS config in the webpack config. Add the Plugin to the `plugins` array:
+## CSS Config
+
+Configure webpack
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+//...
+new MiniCssExtractPlugin()
+//...
+use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
+```
+
+## Linting
+
+Install dependencies
 
 ```
-    new MiniCssExtractPlugin(),
+yarn add -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-webpack-plugin
 ```
 
-Prepend the loader in the CSS pipeline:
+Create `.eslintrc` file
+
+```json
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ]
+}
+```
+
+Configure webpack
+
+```js
+const EslintWebpackPlugin = require('eslint-webpack-plugin');
+//...
+new EslintWebpackPlugin({
+    context: 'src',
+    extensions: ['ts', 'tsx'],
+    failOnError: true,
+    failOnWarning: true,
+})
+//...
+```
+
+Add manual command for running the linter in `package.json`
 
 ```
-use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+"lint:ts": "eslint src --ext .ts,.tsx"
 ```

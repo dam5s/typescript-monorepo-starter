@@ -3,8 +3,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
-const isProduction = process.env.NODE_ENV === 'production';
+const EslintWebpackPlugin = require('eslint-webpack-plugin');
 
 const config = {
   entry: './src/index.ts',
@@ -20,6 +19,12 @@ const config = {
       template: 'index.html',
     }),
     new MiniCssExtractPlugin(),
+    new EslintWebpackPlugin({
+      context: 'src',
+      extensions: ['ts', 'tsx'],
+      failOnError: true,
+      failOnWarning: true,
+    }),
 
     // Add your plugins here
     // Learn more about plugins from https://webpack.js.org/configuration/plugins/
@@ -49,11 +54,4 @@ const config = {
   },
 };
 
-module.exports = () => {
-  if (isProduction) {
-    config.mode = 'production';
-  } else {
-    config.mode = 'development';
-  }
-  return config;
-};
+module.exports = () => config;

@@ -8,8 +8,12 @@
     "react-redux": "^7.2.4"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.22.1",
+    "@typescript-eslint/parser": "^4.22.1",
     "@webpack-cli/generators": "^2.1.0",
     "css-loader": "^5.2.4",
+    "eslint": "^7.25.0",
+    "eslint-webpack-plugin": "^2.5.4",
     "html-webpack-plugin": "^5.3.1",
     "mini-css-extract-plugin": "^1.6.0",
     "prettier": "^2.2.1",
@@ -23,10 +27,11 @@
   },
   "description": "React Redux Starter",
   "scripts": {
-    "build": "webpack --mode=production --node-env=production",
+    "build": "webpack --mode=production",
     "build:dev": "webpack --mode=development",
-    "build:prod": "webpack --mode=production --node-env=production",
+    "build:prod": "webpack --mode=production",
     "watch": "webpack --watch",
-    "serve": "webpack serve"
+    "serve": "webpack serve",
+    "lint:ts": "eslint src --ext .ts,.tsx"
   }
 }
