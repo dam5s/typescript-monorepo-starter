@@ -25,7 +25,7 @@ $ cat package.json
   "private": true
 }
 
-$ yarn add react react-dom
+$ yarn add react react-dom react-redux
 $ yarn add -D \
     typescript \
     webpack \
