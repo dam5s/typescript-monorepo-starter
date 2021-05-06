@@ -31,7 +31,7 @@ $ yarn add -D \
     webpack \
     webpack-cli \
     webpack-dev-server \
-    style-loader \
+    mini-css-extract-plugin \
     css-loader
 
 $ npx webpack init
@@ -49,3 +49,15 @@ $ npx webpack init
 ```
 
 Now edit `package.json` to restore your project name and version.
+
+Fix the CSS config in the webpack config. Add the Plugin to the `plugins` array:
+
+```
+    new MiniCssExtractPlugin(),
+```
+
+Prepend the loader in the CSS pipeline:
+
+```
+use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+```
