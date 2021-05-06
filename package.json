@@ -8,11 +8,25 @@
     "react-redux": "^7.2.4"
   },
   "devDependencies": {
+    "@webpack-cli/generators": "^2.1.0",
     "css-loader": "^5.2.4",
+    "html-webpack-plugin": "^5.3.1",
+    "prettier": "^2.2.1",
+    "sass": "^1.32.12",
+    "sass-loader": "^11.0.1",
     "style-loader": "^2.0.0",
+    "ts-loader": "^9.1.2",
     "typescript": "^4.2.4",
     "webpack": "^5.36.2",
     "webpack-cli": "^4.7.0",
     "webpack-dev-server": "^3.11.2"
+  },
+  "description": "React Redux Starter",
+  "scripts": {
+    "build": "webpack --mode=production --node-env=production",
+    "build:dev": "webpack --mode=development",
+    "build:prod": "webpack --mode=production --node-env=production",
+    "watch": "webpack --watch",
+    "serve": "webpack serve"
   }
 }
