@@ -59,5 +59,5 @@ Fix the CSS config in the webpack config. Add the Plugin to the `plugins` array:
 Prepend the loader in the CSS pipeline:
 
 ```
-use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
 ```
