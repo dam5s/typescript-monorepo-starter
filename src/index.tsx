@@ -1,5 +1,4 @@
 import './app.scss';
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Joke} from './components/Joke';

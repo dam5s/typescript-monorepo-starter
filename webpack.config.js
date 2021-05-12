@@ -4,6 +4,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const EslintWebpackPlugin = require('eslint-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 const config = {
   entry: './src/index.tsx',
@@ -15,6 +16,7 @@ const config = {
     host: 'localhost',
   },
   plugins: [
+    new Dotenv(),
     new HtmlWebpackPlugin({
       template: 'index.html',
     }),

@@ -27,6 +27,7 @@
     "@webpack-cli/generators": "^2.1.0",
     "babel-jest": "^26.6.3",
     "css-loader": "^5.2.4",
+    "dotenv-webpack": "^7.0.2",
     "eslint": "^7.25.0",
     "eslint-webpack-plugin": "^2.5.4",
     "html-webpack-plugin": "^5.3.1",
@@ -48,7 +49,7 @@
     "build:dev": "webpack --mode=development",
     "build:prod": "webpack --mode=production",
     "watch": "webpack --watch",
-    "serve": "webpack serve",
+    "serve": "webpack serve --mode=development",
     "lint:ts": "eslint src --ext .ts,.tsx",
     "test": "jest"
   }
