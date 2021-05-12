@@ -2,6 +2,7 @@ import {MockWebServer, mockWebServer} from './MockWebServer';
 import {sendRequest, sendRequestForJson} from '../Http';
 import 'whatwg-fetch';
 import {Decoder, number, object, string} from 'decoders';
+import * as Result from '../../prelude/Result';
 
 describe('Http module', () => {
 
@@ -21,6 +22,7 @@ describe('Http module', () => {
             server.stub(200, {hello: 'world'});
 
             sendRequest({url: server.url('/foo/bar'), method: 'GET'})
+                .then(Result.chain)
                 .then(async result => {
                     const maybeSuccess = result.orNull();
                     expect(maybeSuccess).not.toBeNull();
@@ -38,6 +40,7 @@ describe('Http module', () => {
             server.stub(400, {message: 'Oops'});
 
             sendRequest({url: server.url('/some/path'), method: 'GET'})
+                .then(Result.chain)
                 .then(result => {
                     result
                         .onError((httpError) => {
@@ -51,6 +54,7 @@ describe('Http module', () => {
             server.stub(500, {message: 'Oops'});
 
             sendRequest({url: server.url('/some/path'), method: 'GET'})
+                .then(Result.chain)
                 .then(result => {
                     result.onError((httpError) => {
                         expect(httpError.type).toEqual('server error');
@@ -65,6 +69,7 @@ describe('Http module', () => {
             server.stub(unhandledStatus, {message: 'You are redirected?!'});
 
             sendRequest({url: server.url('/some/path'), method: 'GET'})
+                .then(Result.chain)
                 .then(result => {
                     result.onError((httpError) => {
                         expect(httpError.type).toEqual('unknown error');
@@ -77,6 +82,7 @@ describe('Http module', () => {
             server.stop();
 
             sendRequest({url: 'http://localhost/incorrect/server', method: 'GET'})
+                .then(Result.chain)
                 .then(result => {
                     result.onError((httpError) => {
                         expect(httpError.type).toEqual('connection error');
@@ -102,6 +108,7 @@ describe('Http module', () => {
             server.stub(200, {id: 14, name: 'John Doe'});
 
             sendRequestForJson<JsonType>({url: server.url('/users/14'), method: 'GET'}, jsonDecoder)
+                .then(Result.chain)
                 .then(result => {
                     const maybeSuccess = result.orNull();
                     expect(maybeSuccess).toEqual({id: 14, name: 'John Doe'});
@@ -113,6 +120,7 @@ describe('Http module', () => {
             server.stub(200, {not: 'expected'});
 
             sendRequestForJson<JsonType>({url: server.url('/users/14'), method: 'GET'}, jsonDecoder)
+                .then(Result.chain)
                 .then(result => {
                     result.onError((httpError) => {
                         expect(httpError.type).toEqual('deserialization error');

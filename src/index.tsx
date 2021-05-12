@@ -1,11 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-
-import {Joke} from './components/joke';
-
 import './app.scss';
 
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {Joke} from './components/Joke';
+import {Provider} from 'react-redux';
+import {stateStore} from './stateStore';
+
 ReactDOM.render(
-    <Joke text="Chuck Norris once won a game of connect four in 3 moves."/>,
+    <Provider store={stateStore}>
+        <Joke/>
+    </Provider>,
     document.getElementById('root')
 );

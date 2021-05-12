@@ -88,17 +88,8 @@ Create `.eslintrc` file
       "plugin:@typescript-eslint/recommended"
    ],
    "rules": {
-      "quotes": [
-         "error",
-         "single",
-         {
-            "avoidEscape": true
-         }
-      ],
-      "semi": [
-         "error",
-         "always"
-      ]
+      "quotes": ["error", "single", {"avoidEscape": true}],
+      "semi": ["error", "always"]
    }
 }
 ```
@@ -178,8 +169,8 @@ Create `babel.config.json`
        document.getElementById('root')
    )
    ```
-1. Write the jest test at `src/components/__tests__/joke.spec.tsx`, it will be detected by jest automatically.
-1. Create your `src/components/joke.tsx` to match your specification.
+1. Write the jest test at `src/components/__tests__/Joke.spec.tsx`, it will be detected by jest automatically.
+1. Create your `src/components/Joke.tsx` to match your specification.
 
 ## Writing your first network access
 
