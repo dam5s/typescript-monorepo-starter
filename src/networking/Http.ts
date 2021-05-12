@@ -1,5 +1,6 @@
 import * as Result from '../prelude/Result';
-import {Decoder} from 'decoders';
+import * as Maybe from '../prelude/Maybe';
+import {Decoder} from 'schemawax';
 
 export type HttpError =
     | { type: 'connection error' }
@@ -25,8 +26,8 @@ export const deserializationError = (response: Response): HttpError => ({
 
 const requestInit = (request: HttpRequest): RequestInit => ({method: request.method});
 
-export const sendRequest = (request: HttpRequest): HttpPromise => {
-    return fetch(request.url, requestInit(request))
+export const sendRequest = (request: HttpRequest): HttpPromise =>
+    fetch(request.url, requestInit(request))
         .then((response: Response): Result.Value<Response, HttpError> => {
             switch (response.status) {
                 case 200:
@@ -40,23 +41,21 @@ export const sendRequest = (request: HttpRequest): HttpPromise => {
             }
         })
         .catch(() => Result.failure<Response, HttpError>(connectionError));
-};
 
-const decodeJson = <T>(response: Response, decoder: Decoder<T>, resolve: (result: Result.Value<T, HttpError>) => void) => {
-    response.json().then(object => {
-        decoder(object)
-            .map((json) => resolve(Result.ok(json)))
-            .mapError(() => resolve(Result.failure(deserializationError(response))));
-    });
-};
+const decodeJson = <T>(response: Response, decoder: Decoder<T>, resolve: (result: Result.Value<T, HttpError>) => void) =>
+    response.json().then(object =>
+        Maybe
+            .ofNullable(decoder.decode(object))
+            .map(json => resolve(Result.ok(json)))
+            .orElse(() => resolve(Result.failure(deserializationError(response))))
+    );
 
-export const sendRequestForJson = <T>(request: HttpRequest, decoder: Decoder<T>): JsonPromise<T> => {
-    return new Promise<Result.Value<T, HttpError>>((resolve) => {
-        sendRequest(request).then(result => {
+export const sendRequestForJson = <T>(request: HttpRequest, decoder: Decoder<T>): JsonPromise<T> =>
+    new Promise<Result.Value<T, HttpError>>(resolve =>
+        sendRequest(request).then(result =>
             Result
                 .chain(result)
                 .onSuccess((response) => decodeJson<T>(response, decoder, resolve))
-                .onError((error) => resolve(Result.failure(error)));
-        });
-    });
-};
+                .onError((error) => resolve(Result.failure(error)))
+        )
+    );

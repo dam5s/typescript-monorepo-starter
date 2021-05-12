@@ -1,8 +1,8 @@
 import {MockWebServer, mockWebServer} from './MockWebServer';
 import {sendRequest, sendRequestForJson} from '../Http';
 import 'whatwg-fetch';
-import {Decoder, number, object, string} from 'decoders';
 import * as Result from '../../prelude/Result';
+import * as Json from 'schemawax';
 
 describe('Http module', () => {
 
@@ -99,9 +99,11 @@ describe('Http module', () => {
             name: string,
         }
 
-        const jsonDecoder: Decoder<JsonType> = object({
-            id: number,
-            name: string,
+        const jsonDecoder: Json.Decoder<JsonType> = Json.object({
+            required: {
+                id: Json.number,
+                name: Json.string,
+            }
         });
 
         test('on successful parse', (done) => {

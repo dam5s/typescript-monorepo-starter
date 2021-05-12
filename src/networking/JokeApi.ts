@@ -2,12 +2,16 @@ import ApiConfig from '../ApiConfig';
 import * as Result from '../prelude/Result';
 import {JokeData} from '../stateStore/joke/State';
 import * as Http from './Http';
-import {object, string} from 'decoders';
+import * as Json from 'schemawax';
 
 type JokeJson = { value: { joke: string } }
 
-const jokeDecoder = object({
-    value: object({joke: string})
+const jokeDecoder = Json.object({
+    required: {
+        value: Json.object(
+            {required: {joke: Json.string}}
+        )
+    }
 });
 
 export const fetchRandom = (baseUrl: string = ApiConfig.baseUrl()): Promise<Result.Value<JokeData, Http.HttpError>> =>
