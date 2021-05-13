@@ -1,63 +1,64 @@
 import * as Result from './Result';
+import {Consumer, Mapping} from './FunctionTypes';
 
 export type RejectionError = { reason: unknown }
 
-const create = <S, E>(promise: Promise<Result.Value<S, E>>): Type<S, E> => ({
-    map: <NewS>(mapping: Mapping<S, NewS>): Type<NewS, E> =>
+const create = <S, E>(promise: Promise<Result.Value<S, E>>): Pipeline<S, E> => ({
+    map: <NewS>(mapping: Mapping<S, NewS>): Pipeline<NewS, E> =>
         create(
             promise.then(result => Result
-                .chain(result)
+                .pipeline(result)
                 .map(mapping)
                 .value()
             )
         ),
-    onSuccess: (consumer: Consumer<S>): Type<S, E> =>
+    mapError: <NewE>(mapping: Mapping<E, NewE>): Pipeline<S, NewE> =>
         create(
             promise.then(result => Result
-                .chain(result)
-                .onSuccess(consumer)
+                .pipeline(result)
+                .mapError(mapping)
                 .value()
             )
         ),
-    flatMap: <NewS>(mapping: Mapping<S, Type<NewS, E>>): Type<NewS, E> =>
+    flatMap: <NewS>(mapping: Mapping<S, Pipeline<NewS, E>>): Pipeline<NewS, E> =>
         create(new Promise<Result.Value<NewS, E>>(resolve => {
             promise.then(result => {
                 Result
-                    .chain(result)
+                    .pipeline(result)
                     .onSuccess(value => {
                         mapping(value).onComplete(resolve);
                     })
                     .onError(error => resolve(Result.failure<NewS, E>(error)));
             });
         })),
-    mapError: <NewE>(mapping: Mapping<E, NewE>): Type<S, NewE> =>
-        create(
-            promise.then(result => Result
-                .chain(result)
-                .mapError(mapping)
-                .value()
-            )
-        ),
-    onError: (consumer: Consumer<E>): Type<S, E> =>
-        create(
-            promise.then(result => Result
-                .chain(result)
-                .onError(consumer)
-                .value()
-            )
-        ),
-    flatMapError: <NewE>(mapping: Mapping<E, Type<S, NewE>>): Type<S, NewE> =>
+    flatMapError: <NewE>(mapping: Mapping<E, Pipeline<S, NewE>>): Pipeline<S, NewE> =>
         create(new Promise<Result.Value<S, NewE>>(resolve => {
             promise.then(result => {
                 Result
-                    .chain(result)
+                    .pipeline(result)
                     .onSuccess(value => resolve(Result.ok<S, NewE>(value)))
                     .onError(error => {
                         mapping(error).onComplete(resolve);
                     });
             });
         })),
-    onComplete: (consumer: Consumer<Result.Value<S, E>>): Type<S, E> =>
+    onSuccess: (consumer: Consumer<S>): Pipeline<S, E> =>
+        create(
+            promise.then(result => Result
+                .pipeline(result)
+                .onSuccess(consumer)
+                .value()
+            )
+        ),
+    onError: (consumer: Consumer<E>): Pipeline<S, E> =>
+        create(
+            promise.then(result => Result
+                .pipeline(result)
+                .onError(consumer)
+                .value()
+            )
+        ),
+    onComplete: (consumer: Consumer<Result.Value<S, E>>): Pipeline<S, E> =>
         create(
             promise.then(result => {
                 consumer(result);
@@ -66,7 +67,7 @@ const create = <S, E>(promise: Promise<Result.Value<S, E>>): Type<S, E> => ({
         )
 });
 
-export const ofPromise = <S>(promise: Promise<S>): Type<S, RejectionError> => {
+export const ofPromise = <S>(promise: Promise<S>): Pipeline<S, RejectionError> => {
     const newPromise = promise
         .then(value => Result.ok<S, RejectionError>(value))
         .catch(reason => Result.failure<S, RejectionError>({reason}));
@@ -74,24 +75,21 @@ export const ofPromise = <S>(promise: Promise<S>): Type<S, RejectionError> => {
     return create(newPromise);
 };
 
-export const ofResult = <S, E>(result: Result.Value<S, E>): Type<S, E> =>
+export const ofResult = <S, E>(result: Result.Value<S, E>): Pipeline<S, E> =>
     create(new Promise<Result.Value<S, E>>(resolve => resolve(result)));
 
-export const ok = <S, E>(value: S): Type<S, E> =>
+export const ok = <S, E>(value: S): Pipeline<S, E> =>
     ofResult(Result.ok(value));
 
-export const failure = <S, E>(error: E): Type<S, E> =>
+export const failure = <S, E>(error: E): Pipeline<S, E> =>
     ofResult(Result.failure(error));
 
-type Mapping<A, B> = (a: A) => B
-type Consumer<A> = Mapping<A, void>
-
-export interface Type<S, E> {
-    map: <NewS>(mapping: Mapping<S, NewS>) => Type<NewS, E>
-    onSuccess: (consumer: Consumer<S>) => Type<S, E>
-    flatMap: <NewS>(mapping: Mapping<S, Type<NewS, E>>) => Type<NewS, E>
-    mapError: <NewE>(mapping: Mapping<E, NewE>) => Type<S, NewE>
-    onError: (consumer: Consumer<E>) => Type<S, E>
-    flatMapError: <NewE>(mapping: Mapping<E, Type<S, NewE>>) => Type<S, NewE>
-    onComplete: (consumer: Consumer<Result.Value<S, E>>) => Type<S, E>
+export interface Pipeline<S, E> {
+    map: <NewS>(mapping: Mapping<S, NewS>) => Pipeline<NewS, E>
+    mapError: <NewE>(mapping: Mapping<E, NewE>) => Pipeline<S, NewE>
+    flatMap: <NewS>(mapping: Mapping<S, Pipeline<NewS, E>>) => Pipeline<NewS, E>
+    flatMapError: <NewE>(mapping: Mapping<E, Pipeline<S, NewE>>) => Pipeline<S, NewE>
+    onSuccess: (consumer: Consumer<S>) => Pipeline<S, E>
+    onError: (consumer: Consumer<E>) => Pipeline<S, E>
+    onComplete: (consumer: Consumer<Result.Value<S, E>>) => Pipeline<S, E>
 }

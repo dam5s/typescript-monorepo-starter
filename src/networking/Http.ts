@@ -12,7 +12,7 @@ export type Error =
 type HttpRequest =
     | { method: 'GET', url: string }
 
-export type Result<T> = AsyncResult.Type<T, Error>
+export type Result<T> = AsyncResult.Pipeline<T, Error>
 
 export const connectionError: Error = {type: 'connection error'};
 export const unknownError = (response: Response): Error => ({type: 'unknown error', response: response});
@@ -30,7 +30,7 @@ export const sendRequest = (request: HttpRequest): Result<Response> =>
     AsyncResult
         .ofPromise(fetch(request.url, requestInit(request)))
         .mapError((): Error => connectionError)
-        .flatMap((response: Response): AsyncResult.Type<Response, Error> => {
+        .flatMap((response: Response): AsyncResult.Pipeline<Response, Error> => {
             switch (response.status) {
                 case 200:
                     return AsyncResult.ok(response);
@@ -43,7 +43,7 @@ export const sendRequest = (request: HttpRequest): Result<Response> =>
             }
         });
 
-const decodeJson = <T>(decoder: Decoder<T>) => (response: Response): AsyncResult.Type<T, Error> =>
+const decodeJson = <T>(decoder: Decoder<T>) => (response: Response): AsyncResult.Pipeline<T, Error> =>
     AsyncResult
         .ofPromise(response.json())
         .mapError(() => deserializationError(response))

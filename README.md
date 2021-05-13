@@ -175,9 +175,9 @@ Create `babel.config.json`
 ## Writing your first network access
 
 1. `neworking/Http` contains the base of the HTTP layer:
-   * `sendRequest` returns a `AsyncResult.Type<Response, Http.Error>`
+   * `sendRequest` returns a `AsyncResult.Pipeline<Response, Http.Error>`
    * `sendRequestForJson` takes an additional json `Decoder<T>`
-     and returns a `AsyncResult.Type<T, Http.Error>` aliased as `HttpResult<T>`
+     and returns a `AsyncResult.Pipeline<T, Http.Error>` aliased as `HttpResult<T>`
 1. `networking/JokeApi` is an example of integration with an actual API endpoint.
 1. The `Joke` component now integrates with the API via a dispatch that goes to the `Interactions` middleware.
 

@@ -1,21 +1,20 @@
 import {match} from 'ts-pattern';
+import {Mapping} from './FunctionTypes';
 
 type Value<T> =
     | { type: 'some', value: T }
     | { type: 'none' }
 
-type Mapping<A, B> = (a: A) => B
-
-interface Chain<T> {
-    map: <U>(mapping: Mapping<T, U>) => Chain<U>
+interface MaybePipeline<T> {
+    map: <U>(mapping: Mapping<T, U>) => MaybePipeline<U>
     orElse: (other: () => T) => T
 }
 
-export const chain = <T>(value: Value<T>): Chain<T> => ({
-    map: <U>(mapping: Mapping<T, U>): Chain<U> =>
+export const pipeline = <T>(value: Value<T>): MaybePipeline<T> => ({
+    map: <U>(mapping: Mapping<T, U>): MaybePipeline<U> =>
         match(value)
-            .with({type: 'some'}, ({value}) => chain<U>({type: 'some', value: mapping(value)}))
-            .with({type: 'none'}, () => chain<U>({type: 'none'}))
+            .with({type: 'some'}, ({value}) => pipeline<U>({type: 'some', value: mapping(value)}))
+            .with({type: 'none'}, () => pipeline<U>({type: 'none'}))
             .exhaustive(),
     orElse: (other: () => T) =>
         match(value)
@@ -24,5 +23,5 @@ export const chain = <T>(value: Value<T>): Chain<T> => ({
             .exhaustive()
 });
 
-export const ofNullable = <T>(nullable: T | null): Chain<T> =>
-    nullable ? chain({type: 'some', value: nullable}) : chain({type: 'none'});
+export const ofNullable = <T>(nullable: T | null): MaybePipeline<T> =>
+    nullable ? pipeline({type: 'some', value: nullable}) : pipeline({type: 'none'});
