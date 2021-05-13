@@ -9,7 +9,7 @@ import {Action, Reducer} from 'redux';
 const startLoadingJoke = (state: JokeState): JokeState =>
     ({joke: RemoteData.startLoading(state.joke)});
 
-const finishLoadingJoke = (state: JokeState, result: Result.Value<JokeData, Http.HttpError>): JokeState =>
+const finishLoadingJoke = (state: JokeState, result: Result.Value<JokeData, Http.Error>): JokeState =>
     ({joke: Result.chain(result).toRemoteData()});
 
 export const jokeReducer: Reducer<JokeState, Action> = (state = initialState, action: Action): JokeState => {

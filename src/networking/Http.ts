@@ -1,8 +1,8 @@
-import * as Result from '../prelude/Result';
 import * as Maybe from '../prelude/Maybe';
 import {Decoder} from 'schemawax';
+import * as AsyncResult from '../prelude/AsyncResult';
 
-export type HttpError =
+export type Error =
     | { type: 'connection error' }
     | { type: 'unknown error', response: Response }
     | { type: 'api error', response: Response }
@@ -12,50 +12,47 @@ export type HttpError =
 type HttpRequest =
     | { method: 'GET', url: string }
 
-export type HttpPromise = Promise<Result.Value<Response, HttpError>>
-export type JsonPromise<T> = Promise<Result.Value<T, HttpError>>
+export type Result<T> = AsyncResult.Type<T, Error>
 
-export const connectionError: HttpError = {type: 'connection error'};
-export const unknownError = (response: Response): HttpError => ({type: 'unknown error', response: response});
-export const apiError = (response: Response): HttpError => ({type: 'api error', response: response});
-export const serverError = (response: Response): HttpError => ({type: 'server error', response: response});
-export const deserializationError = (response: Response): HttpError => ({
+export const connectionError: Error = {type: 'connection error'};
+export const unknownError = (response: Response): Error => ({type: 'unknown error', response: response});
+export const apiError = (response: Response): Error => ({type: 'api error', response: response});
+export const serverError = (response: Response): Error => ({type: 'server error', response: response});
+export const deserializationError = (response: Response): Error => ({
     type: 'deserialization error',
     response: response
 });
 
-const requestInit = (request: HttpRequest): RequestInit => ({method: request.method});
+const requestInit = (request: HttpRequest): RequestInit =>
+    ({method: request.method});
 
-export const sendRequest = (request: HttpRequest): HttpPromise =>
-    fetch(request.url, requestInit(request))
-        .then((response: Response): Result.Value<Response, HttpError> => {
+export const sendRequest = (request: HttpRequest): Result<Response> =>
+    AsyncResult
+        .ofPromise(fetch(request.url, requestInit(request)))
+        .mapError((): Error => connectionError)
+        .flatMap((response: Response): AsyncResult.Type<Response, Error> => {
             switch (response.status) {
                 case 200:
-                    return Result.ok(response);
+                    return AsyncResult.ok(response);
                 case 400:
-                    return Result.failure(apiError(response));
+                    return AsyncResult.failure(apiError(response));
                 case 500:
-                    return Result.failure(serverError(response));
+                    return AsyncResult.failure(serverError(response));
                 default:
-                    return Result.failure(unknownError(response));
+                    return AsyncResult.failure(unknownError(response));
             }
-        })
-        .catch(() => Result.failure<Response, HttpError>(connectionError));
+        });
 
-const decodeJson = <T>(response: Response, decoder: Decoder<T>, resolve: (result: Result.Value<T, HttpError>) => void) =>
-    response.json().then(object =>
-        Maybe
-            .ofNullable(decoder.decode(object))
-            .map(json => resolve(Result.ok(json)))
-            .orElse(() => resolve(Result.failure(deserializationError(response))))
-    );
+const decodeJson = <T>(decoder: Decoder<T>) => (response: Response): AsyncResult.Type<T, Error> =>
+    AsyncResult
+        .ofPromise(response.json())
+        .mapError(() => deserializationError(response))
+        .flatMap(object =>
+            Maybe
+                .ofNullable(decoder.decode(object))
+                .map(json => AsyncResult.ok<T, Error>(json))
+                .orElse(() => AsyncResult.failure<T, Error>(deserializationError(response)))
+        );
 
-export const sendRequestForJson = <T>(request: HttpRequest, decoder: Decoder<T>): JsonPromise<T> =>
-    new Promise<Result.Value<T, HttpError>>(resolve =>
-        sendRequest(request).then(result =>
-            Result
-                .chain(result)
-                .onSuccess((response) => decodeJson<T>(response, decoder, resolve))
-                .onError((error) => resolve(Result.failure(error)))
-        )
-    );
+export const sendRequestForJson = <T>(request: HttpRequest, decoder: Decoder<T>): Result<T> =>
+    sendRequest(request).flatMap(decodeJson<T>(decoder));

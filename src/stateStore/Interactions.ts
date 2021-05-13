@@ -15,7 +15,9 @@ export const middleware = ({dispatch}: MiddlewareAPI<Dispatch, AppState>) => (ne
         match(action)
             .with({type: 'fetch joke'}, () => {
                 dispatch(JokeAction.startLoading);
-                JokeApi.fetchRandom().then(result => dispatch(JokeAction.finishedLoading(result)));
+                JokeApi
+                    .fetchRandom()
+                    .onComplete(result => dispatch(JokeAction.finishedLoading(result)));
             })
             .exhaustive();
     }

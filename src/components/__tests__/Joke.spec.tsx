@@ -1,7 +1,7 @@
 import React from 'react';
 import {Joke} from '../Joke';
 import {render, screen} from '@testing-library/react';
-import {mockWebServer, MockWebServer} from '../../networking/__tests__/MockWebServer';
+import {mockWebServer, MockWebServer} from '../../testSupport/MockWebServer';
 import {stateStore} from '../../stateStore';
 import {Provider} from 'react-redux';
 import 'whatwg-fetch';

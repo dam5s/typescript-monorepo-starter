@@ -6,7 +6,7 @@ export type JokeData = {
 };
 
 export type JokeState = {
-    joke: RemoteData.Value<JokeData, Http.HttpError>
+    joke: RemoteData.Value<JokeData, Http.Error>
 };
 
 export const initialState: JokeState = {

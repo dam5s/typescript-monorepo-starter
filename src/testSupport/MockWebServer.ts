@@ -17,6 +17,8 @@ export const mockWebServer = (): MockWebServer => {
     let server: http.Server | undefined;
 
     const requestListener = (req: http.IncomingMessage, res: http.ServerResponse) => {
+        lastRequest = req;
+
         res.setHeader('Access-Control-Allow-Credentials', 'true');
         res.setHeader('Access-Control-Allow-Methods', '*');
         res.setHeader('Access-Control-Allow-Origin', '*');
@@ -27,8 +29,6 @@ export const mockWebServer = (): MockWebServer => {
             res.end();
             return;
         }
-
-        lastRequest = req;
 
         res.setHeader('Content-Type', 'application/json');
         res.writeHead(code);

@@ -1,8 +1,8 @@
-import {MockWebServer, mockWebServer} from './MockWebServer';
+import {MockWebServer, mockWebServer} from '../../testSupport/MockWebServer';
 import {sendRequest, sendRequestForJson} from '../Http';
 import 'whatwg-fetch';
-import * as Result from '../../prelude/Result';
 import * as Json from 'schemawax';
+import {expectAsync} from '../../testSupport/ExpectAsync';
 
 describe('Http module', () => {
 
@@ -21,46 +21,35 @@ describe('Http module', () => {
         test('simple GET request, on 200', (done) => {
             server.stub(200, {hello: 'world'});
 
-            sendRequest({url: server.url('/foo/bar'), method: 'GET'})
-                .then(Result.chain)
-                .then(async result => {
-                    const maybeSuccess = result.orNull();
-                    expect(maybeSuccess).not.toBeNull();
-                    expect(await maybeSuccess?.json()).toEqual({hello: 'world'});
+            const httpResult = sendRequest({url: server.url('/foo/bar'), method: 'GET'});
 
-                    const lastRequest = server.lastRequest();
-                    expect(lastRequest).not.toBeNull();
-                    expect(lastRequest?.method).toEqual('GET');
-                    expect(lastRequest?.url).toEqual('/foo/bar');
-                })
-                .then(done);
+            expectAsync(httpResult).toSucceed(done, response => {
+                expect(response.status).toEqual(200);
+
+                const lastRequest = server.lastRequest();
+                expect(lastRequest?.method).toEqual('GET');
+                expect(lastRequest?.url).toEqual('/foo/bar');
+            });
         });
 
         test('on 400 status code', (done) => {
             server.stub(400, {message: 'Oops'});
 
-            sendRequest({url: server.url('/some/path'), method: 'GET'})
-                .then(Result.chain)
-                .then(result => {
-                    result
-                        .onError((httpError) => {
-                            expect(httpError.type).toEqual('api error');
-                            done();
-                        });
-                });
+            const httpResult = sendRequest({url: server.url('/some/path'), method: 'GET'});
+
+            expectAsync(httpResult).toFail(done, httpError => {
+                expect(httpError.type).toEqual('api error');
+            });
         });
 
         test('on 500 status code', (done) => {
             server.stub(500, {message: 'Oops'});
 
-            sendRequest({url: server.url('/some/path'), method: 'GET'})
-                .then(Result.chain)
-                .then(result => {
-                    result.onError((httpError) => {
-                        expect(httpError.type).toEqual('server error');
-                        done();
-                    });
-                });
+            const httpResult = sendRequest({url: server.url('/some/path'), method: 'GET'});
+
+            expectAsync(httpResult).toFail(done, httpError => {
+                expect(httpError.type).toEqual('server error');
+            });
         });
 
         test('on unhandled status code', (done) => {
@@ -68,27 +57,21 @@ describe('Http module', () => {
 
             server.stub(unhandledStatus, {message: 'You are redirected?!'});
 
-            sendRequest({url: server.url('/some/path'), method: 'GET'})
-                .then(Result.chain)
-                .then(result => {
-                    result.onError((httpError) => {
-                        expect(httpError.type).toEqual('unknown error');
-                        done();
-                    });
-                });
+            const httpResult = sendRequest({url: server.url('/some/path'), method: 'GET'});
+
+            expectAsync(httpResult).toFail(done, httpError => {
+                expect(httpError.type).toEqual('unknown error');
+            });
         });
 
         test('on connection issue', (done) => {
             server.stop();
 
-            sendRequest({url: 'http://localhost/incorrect/server', method: 'GET'})
-                .then(Result.chain)
-                .then(result => {
-                    result.onError((httpError) => {
-                        expect(httpError.type).toEqual('connection error');
-                        done();
-                    });
-                });
+            const httpResult = sendRequest({url: 'http://localhost/incorrect/server', method: 'GET'});
+
+            expectAsync(httpResult).toFail(done, httpError => {
+                expect(httpError.type).toEqual('connection error');
+            });
         });
     });
 
@@ -109,26 +92,21 @@ describe('Http module', () => {
         test('on successful parse', (done) => {
             server.stub(200, {id: 14, name: 'John Doe'});
 
-            sendRequestForJson<JsonType>({url: server.url('/users/14'), method: 'GET'}, jsonDecoder)
-                .then(Result.chain)
-                .then(result => {
-                    const maybeSuccess = result.orNull();
-                    expect(maybeSuccess).toEqual({id: 14, name: 'John Doe'});
-                    done();
-                });
+            const httpResult = sendRequestForJson<JsonType>({url: server.url('/users/14'), method: 'GET'}, jsonDecoder);
+
+            expectAsync(httpResult).toSucceed(done, json => {
+                expect(json).toEqual({id: 14, name: 'John Doe'});
+            });
         });
 
         test('on parse error', (done) => {
             server.stub(200, {not: 'expected'});
 
-            sendRequestForJson<JsonType>({url: server.url('/users/14'), method: 'GET'}, jsonDecoder)
-                .then(Result.chain)
-                .then(result => {
-                    result.onError((httpError) => {
-                        expect(httpError.type).toEqual('deserialization error');
-                        done();
-                    });
-                });
+            const httpResult = sendRequestForJson<JsonType>({url: server.url('/users/14'), method: 'GET'}, jsonDecoder);
+
+            expectAsync(httpResult).toFail(done, httpError => {
+                expect(httpError.type).toEqual('deserialization error');
+            });
         });
     });
 });
