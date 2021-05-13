@@ -6,7 +6,7 @@ export type Value<Success, Error> =
     | { type: 'ok', data: Success }
     | { type: 'failure', error: Error }
 
-export interface ResultPipeline<S, E> {
+interface ResultPipeline<S, E> {
     value: () => Value<S, E>;
     map: <NewS>(mapping: Mapping<S, NewS>) => ResultPipeline<NewS, E>;
     mapError: <NewE>(mapping: Mapping<E, NewE>) => ResultPipeline<S, NewE>;

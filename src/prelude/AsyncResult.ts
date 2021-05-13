@@ -3,9 +3,9 @@ import {Consumer, Mapping} from './FunctionTypes';
 
 export type RejectionError = { reason: unknown }
 
-const create = <S, E>(promise: Promise<Result.Value<S, E>>): Pipeline<S, E> => ({
+const pipeline = <S, E>(promise: Promise<Result.Value<S, E>>): Pipeline<S, E> => ({
     map: <NewS>(mapping: Mapping<S, NewS>): Pipeline<NewS, E> =>
-        create(
+        pipeline(
             promise.then(result => Result
                 .pipeline(result)
                 .map(mapping)
@@ -13,7 +13,7 @@ const create = <S, E>(promise: Promise<Result.Value<S, E>>): Pipeline<S, E> => (
             )
         ),
     mapError: <NewE>(mapping: Mapping<E, NewE>): Pipeline<S, NewE> =>
-        create(
+        pipeline(
             promise.then(result => Result
                 .pipeline(result)
                 .mapError(mapping)
@@ -21,7 +21,7 @@ const create = <S, E>(promise: Promise<Result.Value<S, E>>): Pipeline<S, E> => (
             )
         ),
     flatMap: <NewS>(mapping: Mapping<S, Pipeline<NewS, E>>): Pipeline<NewS, E> =>
-        create(new Promise<Result.Value<NewS, E>>(resolve => {
+        pipeline(new Promise<Result.Value<NewS, E>>(resolve => {
             promise.then(result => {
                 Result
                     .pipeline(result)
@@ -32,7 +32,7 @@ const create = <S, E>(promise: Promise<Result.Value<S, E>>): Pipeline<S, E> => (
             });
         })),
     flatMapError: <NewE>(mapping: Mapping<E, Pipeline<S, NewE>>): Pipeline<S, NewE> =>
-        create(new Promise<Result.Value<S, NewE>>(resolve => {
+        pipeline(new Promise<Result.Value<S, NewE>>(resolve => {
             promise.then(result => {
                 Result
                     .pipeline(result)
@@ -43,7 +43,7 @@ const create = <S, E>(promise: Promise<Result.Value<S, E>>): Pipeline<S, E> => (
             });
         })),
     onSuccess: (consumer: Consumer<S>): Pipeline<S, E> =>
-        create(
+        pipeline(
             promise.then(result => Result
                 .pipeline(result)
                 .onSuccess(consumer)
@@ -51,7 +51,7 @@ const create = <S, E>(promise: Promise<Result.Value<S, E>>): Pipeline<S, E> => (
             )
         ),
     onError: (consumer: Consumer<E>): Pipeline<S, E> =>
-        create(
+        pipeline(
             promise.then(result => Result
                 .pipeline(result)
                 .onError(consumer)
@@ -59,7 +59,7 @@ const create = <S, E>(promise: Promise<Result.Value<S, E>>): Pipeline<S, E> => (
             )
         ),
     onComplete: (consumer: Consumer<Result.Value<S, E>>): Pipeline<S, E> =>
-        create(
+        pipeline(
             promise.then(result => {
                 consumer(result);
                 return result;
@@ -72,11 +72,11 @@ export const ofPromise = <S>(promise: Promise<S>): Pipeline<S, RejectionError> =
         .then(value => Result.ok<S, RejectionError>(value))
         .catch(reason => Result.failure<S, RejectionError>({reason}));
 
-    return create(newPromise);
+    return pipeline(newPromise);
 };
 
-export const ofResult = <S, E>(result: Result.Value<S, E>): Pipeline<S, E> =>
-    create(new Promise<Result.Value<S, E>>(resolve => resolve(result)));
+const ofResult = <S, E>(result: Result.Value<S, E>): Pipeline<S, E> =>
+    pipeline(new Promise<Result.Value<S, E>>(resolve => resolve(result)));
 
 export const ok = <S, E>(value: S): Pipeline<S, E> =>
     ofResult(Result.ok(value));
