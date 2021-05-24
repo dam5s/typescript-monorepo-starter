@@ -7,13 +7,18 @@ import {expectAsync} from '../../testSupport/ExpectAsync';
 describe('Http module', () => {
 
     let server: MockWebServer;
+    let oldConsoleError: (message?: unknown, ...optionalParams: unknown[]) => void;
 
     beforeEach(() => {
         server = mockWebServer();
         server.start();
+
+        oldConsoleError = console.error;
+        console.error = () => 'do nothing';
     });
 
     afterEach(() => {
+        console.error = oldConsoleError;
         server.stop();
     });
 

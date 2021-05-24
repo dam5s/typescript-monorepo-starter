@@ -2,7 +2,7 @@ import React, {ReactElement} from 'react';
 import * as Interactions from '../stateStore/Interactions';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppState} from '../stateStore';
-import {match} from 'ts-pattern';
+import {render} from './RemoteDataRenderer';
 
 export const Joke = (): ReactElement => {
     useDispatch()(Interactions.fetchJoke);
@@ -13,15 +13,11 @@ export const Joke = (): ReactElement => {
 const JokeContent = (): ReactElement => {
     const jokeRemoteData = useSelector((state: AppState) => state.joke.joke);
 
-    const text = match(jokeRemoteData)
-        .with({type: 'not loaded'}, () => '')
-        .with({type: 'loading'}, () => 'Loading...')
-        .with({type: 'refreshing'}, ({data}) => data.content)
-        .with({type: 'loaded'}, ({data}) => data.content)
-        .with({type: 'failure'}, () => 'Error while loading')
-        .exhaustive();
-
-    return <article>
-        {text}
-    </article>;
+    return render(jokeRemoteData, {
+        whenNotLoaded: () => <article/>,
+        whenLoading: () => <article>Loading...</article>,
+        whenRefreshing: (data) => <article>{data.content}</article>,
+        whenLoaded: (data) => <article>{data.content}</article>,
+        whenFailed: () => <article>Error while loading</article>
+    });
 };

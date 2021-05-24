@@ -7,6 +7,13 @@ export interface MockWebServer {
     url: (path: string) => string,
     stub: (newCode: number, newResponse: Record<string, unknown>) => void;
     lastRequest: () => http.IncomingMessage | undefined;
+    asyncLastRequest: () => Promise<RecordedRequest>;
+}
+
+export type RecordedRequest = {
+    method: string | undefined,
+    url: string | undefined,
+    body: string,
 }
 
 export const mockWebServer = (): MockWebServer => {
@@ -15,9 +22,17 @@ export const mockWebServer = (): MockWebServer => {
     let body = 'Hello, World!';
     let lastRequest: http.IncomingMessage | undefined;
     let server: http.Server | undefined;
+    let resolve: ((request: RecordedRequest) => void);
+    const promise = new Promise<RecordedRequest>(r => {
+        resolve = r;
+    });
 
     const requestListener = (req: http.IncomingMessage, res: http.ServerResponse) => {
-        lastRequest = req;
+        const recordedRequest: RecordedRequest = {
+            method: req.method,
+            url: req.url,
+            body: ''
+        };
 
         res.setHeader('Access-Control-Allow-Credentials', 'true');
         res.setHeader('Access-Control-Allow-Methods', '*');
@@ -32,7 +47,16 @@ export const mockWebServer = (): MockWebServer => {
 
         res.setHeader('Content-Type', 'application/json');
         res.writeHead(code);
-        res.end(body);
+
+        req.on('data', chunk => {
+            recordedRequest.body += chunk;
+        });
+
+        req.on('end', () => {
+            lastRequest = recordedRequest;
+            resolve(recordedRequest);
+            res.end(body);
+        });
     };
 
     return {
@@ -50,5 +74,6 @@ export const mockWebServer = (): MockWebServer => {
             body = JSON.stringify(newBody);
         },
         lastRequest: () => lastRequest,
+        asyncLastRequest: () => promise,
     };
 };

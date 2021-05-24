@@ -1,7 +1,7 @@
 import {stateStore} from '../index';
 import * as RemoteData from '../../prelude/RemoteData';
-import * as Result from '../../prelude/Result';
 import {connectionError} from '../../networking/Http';
+import {result} from '@ryandur/sand';
 
 describe('State store', () => {
 
@@ -18,15 +18,22 @@ describe('State store', () => {
     describe('finished loading joke', () => {
         test('on success', () => {
             const joke = {content: 'This is the joke'};
-            const result = Result.ok(joke);
-            stateStore.dispatch({reducer: 'joke', type: 'finished loading joke', result});
+
+            stateStore.dispatch({
+                reducer: 'joke',
+                type: 'finished loading joke',
+                result: result.okValue(joke)
+            });
 
             expect(jokeState()).toEqual({joke: RemoteData.loaded(joke)});
         });
 
         test('on failure', () => {
-            const result = Result.failure(connectionError);
-            stateStore.dispatch({reducer: 'joke', type: 'finished loading joke', result});
+            stateStore.dispatch({
+                reducer: 'joke',
+                type: 'finished loading joke',
+                result: result.errValue(connectionError)
+            });
 
             expect(jokeState()).toEqual({joke: RemoteData.failure(connectionError)});
         });

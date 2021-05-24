@@ -1,6 +1,5 @@
-import * as Maybe from '../prelude/Maybe';
 import {Decoder} from 'schemawax';
-import * as AsyncResult from '../prelude/AsyncResult';
+import {asyncResult, maybe, Result} from '@ryandur/sand';
 
 export type Failure =
     | { type: 'connection error' }
@@ -12,7 +11,7 @@ export type Failure =
 type HttpRequest =
     | { method: 'GET', url: string }
 
-export type Result<T> = AsyncResult.Pipeline<T, Failure>
+export type HttpResult<T> = Result.Async.Pipeline<T, Failure>
 
 export const connectionError: Failure = {type: 'connection error'};
 export const unknownError = (response: Response): Failure => ({type: 'unknown error', response: response});
@@ -26,33 +25,32 @@ export const deserializationError = (response: Response): Failure => ({
 const requestInit = (request: HttpRequest): RequestInit =>
     ({method: request.method});
 
-export const sendRequest = (request: HttpRequest): Result<Response> =>
-    AsyncResult
+export const sendRequest = (request: HttpRequest): HttpResult<Response> =>
+    asyncResult
         .ofPromise(fetch(request.url, requestInit(request)))
-        .mapError((): Failure => connectionError)
-        .flatMap((response: Response): AsyncResult.Pipeline<Response, Failure> => {
+        .mapFailure((): Failure => connectionError)
+        .flatMap((response: Response) => {
             switch (response.status) {
                 case 200:
-                    return AsyncResult.ok(response);
+                    return asyncResult.success(response);
                 case 400:
-                    return AsyncResult.failure(apiError(response));
+                    return asyncResult.failure(apiError(response));
                 case 500:
-                    return AsyncResult.failure(serverError(response));
+                    return asyncResult.failure(serverError(response));
                 default:
-                    return AsyncResult.failure(unknownError(response));
+                    return asyncResult.failure(unknownError(response));
             }
         });
 
-const decodeJson = <T>(decoder: Decoder<T>) => (response: Response): AsyncResult.Pipeline<T, Failure> =>
-    AsyncResult
+const decodeJson = <T>(decoder: Decoder<T>) => (response: Response): HttpResult<T> =>
+    asyncResult
         .ofPromise(response.json())
-        .mapError(() => deserializationError(response))
+        .mapFailure(() => deserializationError(response))
         .flatMap(object =>
-            Maybe
-                .ofNullable(decoder.decode(object))
-                .map(json => AsyncResult.ok<T, Failure>(json))
-                .orElse(() => AsyncResult.failure<T, Failure>(deserializationError(response)))
+            maybe(decoder.decode(object) || undefined)
+                .map(json => asyncResult.success<T, Failure>(json))
+                .orElse(asyncResult.failure<T, Failure>(deserializationError(response)))
         );
 
-export const sendRequestForJson = <T>(request: HttpRequest, decoder: Decoder<T>): Result<T> =>
+export const sendRequestForJson = <T>(request: HttpRequest, decoder: Decoder<T>): HttpResult<T> =>
     sendRequest(request).flatMap(decodeJson<T>(decoder));

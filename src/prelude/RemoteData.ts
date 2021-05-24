@@ -1,4 +1,5 @@
 import {match} from 'ts-pattern';
+import {Result} from '@ryandur/sand';
 
 export type Value<Value, Error> =
     | { type: 'not loaded' }
@@ -21,3 +22,6 @@ export const startLoading = <V, E>(data: Value<V, E>): Value<V, E> =>
         .with({type: 'loaded'}, ({data}) => refreshing<V, E>(data))
         .with({type: 'failure'}, () => loading<V, E>())
         .exhaustive();
+
+export const ofResult = <V, E>(result: Result.Value<V, E>): Value<V, E> =>
+    result.isOk ? loaded(result.data) : failure(result.explanation);
