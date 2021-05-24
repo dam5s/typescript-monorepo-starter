@@ -1,8 +1,8 @@
 import ApiConfig from '../ApiConfig';
 import * as Json from 'schemawax';
 import * as Http from './Http';
-import {JokeData} from '../stateStore/joke/State';
 import {HttpResult} from './Http';
+import {JokeData} from '../stateStore/joke';
 
 const jokeDecoder = Json.object({
     required: {

@@ -11,7 +11,7 @@ export const Joke = (): ReactElement => {
 };
 
 const JokeContent = (): ReactElement => {
-    const jokeRemoteData = useSelector((state: AppState) => state.joke.joke);
+    const jokeRemoteData = useSelector((state: AppState) => state.joke.data);
 
     return render(jokeRemoteData, {
         whenNotLoaded: () => <article/>,

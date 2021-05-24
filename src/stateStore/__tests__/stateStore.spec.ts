@@ -8,11 +8,11 @@ describe('State store', () => {
     const jokeState = () => stateStore.getState().joke;
 
     test('start loading joke', () => {
-        expect(jokeState()).toEqual({joke: RemoteData.notLoaded()});
+        expect(jokeState()).toEqual({data: RemoteData.notLoaded()});
 
         stateStore.dispatch({reducer: 'joke', type: 'start loading joke'});
 
-        expect(jokeState()).toEqual({joke: RemoteData.loading()});
+        expect(jokeState()).toEqual({data: RemoteData.loading()});
     });
 
     describe('finished loading joke', () => {
@@ -25,7 +25,7 @@ describe('State store', () => {
                 result: result.okValue(joke)
             });
 
-            expect(jokeState()).toEqual({joke: RemoteData.loaded(joke)});
+            expect(jokeState()).toEqual({data: RemoteData.loaded(joke)});
         });
 
         test('on failure', () => {
@@ -35,7 +35,7 @@ describe('State store', () => {
                 result: result.errValue(connectionError)
             });
 
-            expect(jokeState()).toEqual({joke: RemoteData.failure(connectionError)});
+            expect(jokeState()).toEqual({data: RemoteData.failure(connectionError)});
         });
     });
 });
