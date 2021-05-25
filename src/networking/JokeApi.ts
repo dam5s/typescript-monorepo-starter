@@ -2,7 +2,7 @@ import ApiConfig from '../ApiConfig';
 import * as Json from 'schemawax';
 import * as Http from './Http';
 import {HttpResult} from './Http';
-import {JokeData} from '../stateStore/joke';
+import {Joke} from '../stateStore/joke';
 
 const jokeDecoder = Json.object({
     required: {
@@ -12,6 +12,6 @@ const jokeDecoder = Json.object({
     }
 });
 
-export const fetchRandom = (baseUrl: string = ApiConfig.baseUrl()): HttpResult<JokeData> =>
+export const fetchRandom = (baseUrl: string = ApiConfig.baseUrl()): HttpResult<Joke> =>
     Http.sendRequestForJson({method: 'GET', url: `${baseUrl}/jokes/random`}, jokeDecoder)
-        .map((json): JokeData => ({content: json.value.joke}));
+        .map((json): Joke => ({content: json.value.joke}));
