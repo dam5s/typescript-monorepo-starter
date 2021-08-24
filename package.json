@@ -49,5 +49,8 @@
     "serve": "webpack serve --mode=development",
     "lint:ts": "eslint src --ext .ts,.tsx",
     "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "jsdom"
   }
 }
