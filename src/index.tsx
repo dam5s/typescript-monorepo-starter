@@ -1,4 +1,4 @@
-import './app.scss';
+import './app.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Joke} from './components/Joke';

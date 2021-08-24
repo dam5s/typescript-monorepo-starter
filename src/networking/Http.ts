@@ -1,56 +1,64 @@
 import {Decoder} from 'schemawax';
-import {asyncResult, maybe, Result} from '@ryandur/sand';
+import {asyncResult, AsyncResult} from '../prelude/AsyncResult';
+import {maybe} from '../prelude/Maybe';
 
-export type Failure =
+export type HttpError =
     | { type: 'connection error' }
     | { type: 'unknown error', response: Response }
     | { type: 'api error', response: Response }
     | { type: 'server error', response: Response }
     | { type: 'deserialization error', response: Response }
 
-type HttpRequest =
+export type HttpRequest =
     | { method: 'GET', url: string }
 
-export type HttpResult<T> = Result.Async.Pipeline<T, Failure>
+export type HttpResult<T> = AsyncResult<T, HttpError>
 
-export const connectionError: Failure = {type: 'connection error'};
-export const unknownError = (response: Response): Failure => ({type: 'unknown error', response: response});
-export const apiError = (response: Response): Failure => ({type: 'api error', response: response});
-export const serverError = (response: Response): Failure => ({type: 'server error', response: response});
-export const deserializationError = (response: Response): Failure => ({
-    type: 'deserialization error',
-    response: response
-});
+const connectionError: HttpError = {type: 'connection error'};
+const unknownError = (response: Response): HttpError => ({type: 'unknown error', response: response});
+const apiError = (response: Response): HttpError => ({type: 'api error', response: response});
+const serverError = (response: Response): HttpError => ({type: 'server error', response: response});
+const deserializationError = (response: Response): HttpError => ({type: 'deserialization error', response: response});
 
 const requestInit = (request: HttpRequest): RequestInit =>
     ({method: request.method});
 
-export const sendRequest = (request: HttpRequest): HttpResult<Response> =>
+const sendRequest = (request: HttpRequest): HttpResult<Response> =>
     asyncResult
         .ofPromise(fetch(request.url, requestInit(request)))
-        .mapFailure((): Failure => connectionError)
-        .flatMap((response: Response) => {
+        .mapErr((): HttpError => connectionError)
+        .flatMapOk((response: Response) => {
             switch (response.status) {
                 case 200:
-                    return asyncResult.success(response);
+                    return asyncResult.ok(response);
                 case 400:
-                    return asyncResult.failure(apiError(response));
+                    return asyncResult.err(apiError(response));
                 case 500:
-                    return asyncResult.failure(serverError(response));
+                    return asyncResult.err(serverError(response));
                 default:
-                    return asyncResult.failure(unknownError(response));
+                    return asyncResult.err(unknownError(response));
             }
         });
 
 const decodeJson = <T>(decoder: Decoder<T>) => (response: Response): HttpResult<T> =>
     asyncResult
         .ofPromise(response.json())
-        .mapFailure(() => deserializationError(response))
-        .flatMap(object =>
-            maybe(decoder.decode(object) || undefined)
-                .map(json => asyncResult.success<T, Failure>(json))
-                .orElse(asyncResult.failure<T, Failure>(deserializationError(response)))
+        .mapErr(() => deserializationError(response))
+        .flatMapOk(object =>
+            maybe.of(decoder.decode(object) || undefined)
+                .map(json => asyncResult.ok<T, HttpError>(json))
+                .orElse(asyncResult.err<T, HttpError>(deserializationError(response)))
         );
 
-export const sendRequestForJson = <T>(request: HttpRequest, decoder: Decoder<T>): HttpResult<T> =>
-    sendRequest(request).flatMap(decodeJson<T>(decoder));
+const sendRequestForJson = <T>(request: HttpRequest, decoder: Decoder<T>): HttpResult<T> =>
+    sendRequest(request).flatMapOk(decodeJson<T>(decoder));
+
+export const http = {
+    connectionError,
+    unknownError,
+    apiError,
+    serverError,
+    deserializationError,
+    sendRequest,
+    sendRequestForJson,
+};

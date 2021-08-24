@@ -43,8 +43,7 @@ $ npx webpack init
 ? Which of the following JS solutions do you want to use? Typescript
 ? Do you want to use webpack-dev-server? Yes
 ? Do you want to simplify the creation of HTML files for your bundle? Yes
-? Which of the following CSS solutions do you want to use? SASS
-? Will you be using CSS styles along with SASS in your project? No
+? Which of the following CSS solutions do you want to use? CSS
 ? Will you be using PostCSS in your project? No
 ? Do you want to extract CSS for every file? No
 ? Do you like to install prettier to format generated configuration? Yes
@@ -63,7 +62,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 //...
 new MiniCssExtractPlugin()
 //...
-use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
+use: [MiniCssExtractPlugin.loader, 'css-loader']
 ```
 
 ## Linting
@@ -169,7 +168,7 @@ Create `babel.config.json`
        document.getElementById('root')
    )
    ```
-1. Write the jest test at `src/components/__tests__/Joke.spec.tsx`, it will be detected by jest automatically.
+1. Write the jest test at `src/components/__tests__/Joke.test.tsx`, it will be detected by jest automatically.
 1. Create your `src/components/Joke.tsx` to match your specification.
 
 ## Writing your first network access
@@ -183,11 +182,6 @@ Create `babel.config.json`
 
 ## Loading environment specific configuration
 
-The `ApiConfig` reads values from the environment. We also use a webpack plugin that will populate values from a `.env`
-file places at the root of the repository.
-
-### example `.env`
-
-```
-API_BASE_URL=https://api.icndb.com
-```
+The `ApiConfig` reads values from the environment that we create on window in `env.js`.
+`env.js` is a separate entry in the webpack config. This lets us re-use the generated `app.js`
+when promoting to higher environments and only change `env.js` for those environments. 

@@ -1,11 +1,11 @@
 import React, {ReactElement} from 'react';
-import * as Interactions from '../stateStore/interactions';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppState} from '../stateStore';
 import {render} from './RemoteDataRenderer';
+import {effects} from '../stateStore/effects';
 
 export const Joke = (): ReactElement => {
-    useDispatch()(Interactions.fetchJoke);
+    useDispatch()(effects.fetchJoke);
 
     return <JokeContent/>;
 };

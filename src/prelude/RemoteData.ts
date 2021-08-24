@@ -1,20 +1,20 @@
 import {match} from 'ts-pattern';
-import {Result} from '@ryandur/sand';
+import {Result} from './Result';
 
-export type Value<Value, Error> =
+export type RemoteData<T, E> =
     | { type: 'not loaded' }
     | { type: 'loading' }
-    | { type: 'refreshing', data: Value }
-    | { type: 'loaded', data: Value }
-    | { type: 'failure', error: Error }
+    | { type: 'refreshing', data: T }
+    | { type: 'loaded', data: T }
+    | { type: 'failure', error: E }
 
-export const notLoaded = <V, E>(): Value<V, E> => ({type: 'not loaded'});
-export const loading = <V, E>(): Value<V, E> => ({type: 'loading'});
-export const refreshing = <V, E>(data: V): Value<V, E> => ({type: 'refreshing', data});
-export const loaded = <V, E>(data: V): Value<V, E> => ({type: 'loaded', data});
-export const failure = <V, E>(error: E): Value<V, E> => ({type: 'failure', error});
+const notLoaded = <V, E>(): RemoteData<V, E> => ({type: 'not loaded'});
+const loading = <V, E>(): RemoteData<V, E> => ({type: 'loading'});
+const refreshing = <V, E>(data: V): RemoteData<V, E> => ({type: 'refreshing', data});
+const loaded = <V, E>(data: V): RemoteData<V, E> => ({type: 'loaded', data});
+const failure = <V, E>(error: E): RemoteData<V, E> => ({type: 'failure', error});
 
-export const startLoading = <V, E>(data: Value<V, E>): Value<V, E> =>
+const startLoading = <V, E>(data: RemoteData<V, E>): RemoteData<V, E> =>
     match(data)
         .with({type: 'not loaded'}, () => loading<V, E>())
         .with({type: 'loading'}, () => loading<V, E>())
@@ -23,5 +23,15 @@ export const startLoading = <V, E>(data: Value<V, E>): Value<V, E> =>
         .with({type: 'failure'}, () => loading<V, E>())
         .exhaustive();
 
-export const ofResult = <V, E>(result: Result.Value<V, E>): Value<V, E> =>
-    result.isOk ? loaded(result.data) : failure(result.explanation);
+const ofResult = <V, E>(result: Result<V, E>): RemoteData<V, E> =>
+    result.isOk ? loaded(result.data) : failure(result.reason);
+
+export const remoteData = {
+    notLoaded,
+    loading,
+    refreshing,
+    loaded,
+    failure,
+    startLoading,
+    ofResult
+};

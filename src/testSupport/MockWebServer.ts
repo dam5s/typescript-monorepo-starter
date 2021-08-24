@@ -6,7 +6,7 @@ export interface MockWebServer {
     start: () => void;
     url: (path: string) => string,
     stub: (newCode: number, newResponse: Record<string, unknown>) => void;
-    lastRequest: () => http.IncomingMessage | undefined;
+    lastRequest: () => RecordedRequest | undefined;
     asyncLastRequest: () => Promise<RecordedRequest>;
 }
 
@@ -20,7 +20,7 @@ export const mockWebServer = (): MockWebServer => {
 
     let code = 200;
     let body = 'Hello, World!';
-    let lastRequest: http.IncomingMessage | undefined;
+    let lastRequest: RecordedRequest | undefined;
     let server: http.Server | undefined;
     let resolve: ((request: RecordedRequest) => void);
     const promise = new Promise<RecordedRequest>(r => {

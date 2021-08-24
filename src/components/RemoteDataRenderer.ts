@@ -1,17 +1,17 @@
 import {ReactElement} from 'react';
 import {match} from 'ts-pattern';
-import * as RemoteData from '../prelude/RemoteData';
+import {RemoteData} from '../prelude/RemoteData';
 
-interface RemoteDataRenderer<Value, Error> {
+interface RemoteDataRenderer<T, E> {
     whenNotLoaded: () => ReactElement,
     whenLoading: () => ReactElement,
-    whenRefreshing: (value: Value) => ReactElement,
-    whenLoaded: (value: Value) => ReactElement,
-    whenFailed: (error: Error) => ReactElement
+    whenRefreshing: (value: T) => ReactElement,
+    whenLoaded: (value: T) => ReactElement,
+    whenFailed: (error: E) => ReactElement
 }
 
-export const render = <Value, Error>(remoteData: RemoteData.Value<Value, Error>,
-                                     renderer: RemoteDataRenderer<Value, Error>): ReactElement =>
+export const render = <T, E>(remoteData: RemoteData<T, E>,
+                             renderer: RemoteDataRenderer<T, E>): ReactElement =>
     match(remoteData)
         .with({type: 'not loaded'}, renderer.whenNotLoaded)
         .with({type: 'loading'}, renderer.whenLoading)
