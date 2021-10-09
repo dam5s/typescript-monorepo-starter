@@ -11,11 +11,6 @@
 $ node --version
 v14.16.1
 
-$ npm install -g yarn
-
-$ yarn --version
-1.22.10
-
 $ vi .gitignore
 $ cat .gitginore
 
@@ -23,15 +18,12 @@ node_modules
 
 $ vi package.json
 $ cat package.json
-{
-  "name": "react-redux-starter",
-  "version": "0.1.0",
-  "private": true
-}
+{}
 
-$ yarn add react react-dom react-redux @types/react-dom
-$ yarn add -D \
+$ npm install react react-dom react-redux
+$ npm install -D \
     typescript \
+    @types/react-dom \
     webpack \
     webpack-cli \
     webpack-dev-server \
@@ -53,6 +45,12 @@ $ npx webpack init
 
 Now edit `package.json` to restore your project name and version.
 
+You may also remove the `@webpack-cli/generators` as we won't be needing it anymore.
+
+```shell
+npm uninstall @webpack-cli/generators
+```
+
 ## CSS Config
 
 Configure webpack
@@ -70,7 +68,7 @@ use: [MiniCssExtractPlugin.loader, 'css-loader']
 Install dependencies
 
 ```
-yarn add -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-webpack-plugin
+npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-webpack-plugin
 ```
 
 Create `.eslintrc` file
@@ -110,7 +108,7 @@ new EslintWebpackPlugin({
 Add manual command for running the linter in `package.json`
 
 ```
-"lint:ts": "eslint src --ext .ts,.tsx"
+"lint": "eslint src --ext .ts,.tsx"
 ```
 
 ## Setting up Jest and React Testing
@@ -118,7 +116,7 @@ Add manual command for running the linter in `package.json`
 Add dependencies
 
 ```
-yarn add -D \
+npm install -D \
     jest \
     @types/jest \
     babel-jest \

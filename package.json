@@ -24,8 +24,7 @@
     "@types/whatwg-fetch": "^0.0.33",
     "@typescript-eslint/eslint-plugin": "^4.22.1",
     "@typescript-eslint/parser": "^4.22.1",
-    "@webpack-cli/generators": "^2.3.0",
-    "babel-jest": "^26.6.3",
+    "babel-jest": "^27.2.5",
     "css-loader": "^5.2.4",
     "eslint": "^7.25.0",
     "eslint-webpack-plugin": "^2.5.4",
@@ -43,11 +42,8 @@
   "description": "React Redux Starter",
   "scripts": {
     "build": "webpack --mode=production",
-    "build:dev": "webpack --mode=development",
-    "build:prod": "webpack --mode=production",
-    "watch": "webpack --watch",
     "serve": "webpack serve --mode=development",
-    "lint:ts": "eslint src --ext .ts,.tsx",
+    "lint": "eslint src --ext .ts,.tsx",
     "test": "jest"
   },
   "jest": {
