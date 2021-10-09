@@ -12,7 +12,10 @@ const jokeDecoder = Json.object({
 });
 
 const fetchRandom = (baseUrl: string = ApiConfig.baseUrl()): HttpResult<Joke> =>
-    http.sendRequestForJson({method: 'GET', url: `${baseUrl}/jokes/random`}, jokeDecoder)
+    http
+        .sendRequest({method: 'GET', url: `${baseUrl}/jokes/random`})
+        .flatMapOk(http.expectStatusCode(200))
+        .flatMapOk(http.decodeJson(jokeDecoder))
         .mapOk((json): Joke => ({content: json.value.joke}));
 
 export const jokeApi = {

@@ -5,9 +5,7 @@ import {match} from 'ts-pattern';
 
 export type HttpError =
     | { type: 'connection error' }
-    | { type: 'unknown error', response: Response }
-    | { type: 'api error', response: Response }
-    | { type: 'server error', response: Response }
+    | { type: 'unexpected status code', expected: number, response: Response }
     | { type: 'deserialization error', response: Response }
 
 export type HttpRequest =
@@ -15,11 +13,14 @@ export type HttpRequest =
 
 export type HttpResult<T> = AsyncResult<T, HttpError>
 
-const connectionError: HttpError = {type: 'connection error'};
-const unknownError = (response: Response): HttpError => ({type: 'unknown error', response});
-const apiError = (response: Response): HttpError => ({type: 'api error', response});
-const serverError = (response: Response): HttpError => ({type: 'server error', response});
-const deserializationError = (response: Response): HttpError => ({type: 'deserialization error', response});
+const connectionError: HttpError =
+    {type: 'connection error'};
+
+const unexpectedStatusCode = (expected: number, response: Response): HttpError =>
+    ({type: 'unexpected status code', expected, response});
+
+const deserializationError = (response: Response): HttpError =>
+    ({type: 'deserialization error', response});
 
 const requestInit = (request: HttpRequest): RequestInit =>
     ({method: request.method});
@@ -27,14 +28,12 @@ const requestInit = (request: HttpRequest): RequestInit =>
 const sendRequest = (request: HttpRequest): HttpResult<Response> =>
     asyncResult
         .ofPromise(fetch(request.url, requestInit(request)))
-        .mapErr((): HttpError => connectionError)
-        .flatMapOk((response: Response) =>
-            match(response.status)
-                .with(200, () => asyncResult.ok<Response, HttpError>(response))
-                .with(400, () => asyncResult.err<Response, HttpError>(apiError(response)))
-                .with(500, () => asyncResult.err<Response, HttpError>(serverError(response)))
-                .otherwise(() => asyncResult.err(unknownError(response)))
-        );
+        .mapErr((): HttpError => connectionError);
+
+const expectStatusCode = (expected: number) => (response: Response): HttpResult<Response> =>
+    match(response.status)
+        .with(expected, () => asyncResult.ok<Response, HttpError>(response))
+        .otherwise(() => asyncResult.err(unexpectedStatusCode(expected, response)));
 
 const decodeJson = <T>(decoder: Decoder<T>) => (response: Response): HttpResult<T> =>
     asyncResult
@@ -46,15 +45,11 @@ const decodeJson = <T>(decoder: Decoder<T>) => (response: Response): HttpResult<
                 .orElse(asyncResult.err<T, HttpError>(deserializationError(response)))
         );
 
-const sendRequestForJson = <T>(request: HttpRequest, decoder: Decoder<T>): HttpResult<T> =>
-    sendRequest(request).flatMapOk(decodeJson<T>(decoder));
-
 export const http = {
     connectionError,
-    unknownError,
-    apiError,
-    serverError,
+    unexpectedStatusCode,
     deserializationError,
     sendRequest,
-    sendRequestForJson,
+    decodeJson,
+    expectStatusCode,
 };

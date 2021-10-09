@@ -22,7 +22,7 @@ describe('Http module', () => {
     });
 
     describe('sendRequest', () => {
-        test('simple GET request, on 200', async () => {
+        test('simple GET request', async () => {
             server.stub(200, {hello: 'world'});
 
             const res = await http.sendRequest({url: server.url('/foo/bar'), method: 'GET'}).promise;
@@ -35,35 +35,6 @@ describe('Http module', () => {
             expect(lastRequest?.url).toEqual('/foo/bar');
         });
 
-        test('on 400 status code', async () => {
-            server.stub(400, {message: 'Oops'});
-
-            const res = await http.sendRequest({url: server.url('/some/path'), method: 'GET'}).promise;
-
-            expect(res.isOk).toEqual(false);
-            expect(res.isOk || res.reason.type).toEqual('api error');
-        });
-
-        test('on 500 status code', async () => {
-            server.stub(500, {message: 'Oops'});
-
-            const res = await http.sendRequest({url: server.url('/some/path'), method: 'GET'}).promise;
-
-            expect(res.isOk).toEqual(false);
-            expect(res.isOk || res.reason.type).toEqual('server error');
-        });
-
-        test('on unhandled status code', async () => {
-            const unhandledStatus = 301;
-
-            server.stub(unhandledStatus, {message: 'You are redirected?!'});
-
-            const res = await http.sendRequest({url: server.url('/some/path'), method: 'GET'}).promise;
-
-            expect(res.isOk).toEqual(false);
-            expect(res.isOk || res.reason.type).toEqual('unknown error');
-        });
-
         test('on connection issue', async () => {
             server.stop();
 
@@ -74,7 +45,32 @@ describe('Http module', () => {
         });
     });
 
-    describe('sendRequestForJson', () => {
+    describe('expectStatusCode', () => {
+        test('when expected', async () => {
+            server.stub(201, {message: 'Nice'});
+
+            const res = await http
+                .sendRequest({url: server.url('/some/path'), method: 'GET'})
+                .flatMapOk(http.expectStatusCode(201))
+                .promise;
+
+            expect(res.isOk).toEqual(true);
+        });
+
+        test('when unexpected', async () => {
+            server.stub(400, {message: 'Oops'});
+
+            const res = await http
+                .sendRequest({url: server.url('/some/path'), method: 'GET'})
+                .flatMapOk(http.expectStatusCode(201))
+                .promise;
+
+            expect(res.isOk).toEqual(false);
+            expect(res.isOk || res.reason.type).toEqual('unexpected status code');
+        });
+    });
+
+    describe('decodeJson', () => {
 
         interface JsonType {
             id: number,
@@ -95,7 +91,10 @@ describe('Http module', () => {
             server.stub(200, {id: 14, name: 'John Doe'});
             const request = createRequest(server);
 
-            const res = await http.sendRequestForJson<JsonType>(request, decoder).promise;
+            const res = await http
+                .sendRequest(request)
+                .flatMapOk(http.decodeJson(decoder))
+                .promise;
 
             expect(res.isOk).toEqual(true);
             expect(res.isOk && res.data).toEqual({id: 14, name: 'John Doe'});
@@ -105,7 +104,10 @@ describe('Http module', () => {
             server.stub(200, {not: 'expected'});
             const request = createRequest(server);
 
-            const res = await http.sendRequestForJson<JsonType>(request, decoder).promise;
+            const res = await http
+                .sendRequest(request)
+                .flatMapOk(http.decodeJson(decoder))
+                .promise;
 
             expect(res.isOk).toEqual(false);
             expect(res.isOk || res.reason.type).toEqual('deserialization error');
