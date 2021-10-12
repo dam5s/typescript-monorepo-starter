@@ -13,8 +13,8 @@ export const Joke = (): ReactElement => {
     return render(jokeData, {
         whenNotLoaded: () => <article/>,
         whenLoading: () => <article>Loading...</article>,
-        whenRefreshing: (data) => <article>{data.content}</article>,
-        whenLoaded: (data) => <article>{data.content}</article>,
+        whenRefreshing: (joke) => <article>{joke.content}</article>,
+        whenLoaded: (joke) => <article>{joke.content}</article>,
         whenFailed: () => <article>Error while loading</article>
     });
 };
