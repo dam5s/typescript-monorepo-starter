@@ -2,7 +2,7 @@ declare global {
     interface Window { env: Record<string, string> }
 }
 
-const env = (name: string): string | undefined =>
+const getEnv = (name: string): string | undefined =>
     window.env[name];
 
 const missingConfig = (name: string): string => {
@@ -10,8 +10,8 @@ const missingConfig = (name: string): string => {
 };
 
 const requireEnv = (name: string) => (): string =>
-    env(name) || missingConfig(name);
+    getEnv(name) || missingConfig(name);
 
-export default {
+export const env = {
     baseUrl: requireEnv('baseUrl')
 };

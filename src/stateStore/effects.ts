@@ -1,8 +1,8 @@
 import {AnyAction, Dispatch, MiddlewareAPI} from 'redux';
 import {AppState} from './index';
 import {match} from 'ts-pattern';
-import {jokeActions} from './joke';
-import {jokeApi} from '../networking/JokeApi';
+import {jokeApi} from '../components/joke/JokeApi';
+import {jokeState} from '../components/joke/JokeState';
 
 type Effect =
     | { type: 'effect/fetch joke' }
@@ -10,15 +10,17 @@ type Effect =
 const isEffect = (variable: unknown): variable is Effect =>
     (variable as Effect).type.startsWith('effect/');
 
+const doFetchJoke = (dispatch: Dispatch) => {
+    dispatch(jokeState.startLoading);
+    jokeApi
+        .fetchRandom()
+        .onComplete(result => dispatch(jokeState.finishedLoading(result)));
+};
+
 const middleware = ({dispatch}: MiddlewareAPI<Dispatch, AppState>) => (next: Dispatch) => (action: AnyAction): void => {
     if (isEffect(action)) {
         match(action)
-            .with({type: 'effect/fetch joke'}, () => {
-                dispatch(jokeActions.startLoading);
-                jokeApi
-                    .fetchRandom()
-                    .onComplete(result => dispatch(jokeActions.finishedLoading(result)));
-            })
+            .with({type: 'effect/fetch joke'}, () => doFetchJoke(dispatch))
             .exhaustive();
     }
     next(action);

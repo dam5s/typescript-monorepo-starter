@@ -1,8 +1,8 @@
 import {Action, Reducer} from 'redux';
 import {match} from 'ts-pattern';
-import {Result} from '../prelude/Result';
-import {remoteData, RemoteData} from '../prelude/RemoteData';
-import {HttpError} from '../networking/Http';
+import {Result} from '../../prelude/Result';
+import {remoteData, RemoteData} from '../../prelude/RemoteData';
+import {HttpError} from '../../networking/Http';
 
 /* State */
 
@@ -33,24 +33,25 @@ const startLoading: JokeAction =
 const finishedLoading = (value: Result<Joke, HttpError>): JokeAction =>
     ({type: 'joke/finished loading joke', value});
 
-export const jokeActions = {
-    startLoading,
-    finishedLoading
-};
-
 /* Reducer */
 
-const startLoadingJoke = (state: JokeState): JokeState =>
+const doStartLoading = (state: JokeState): JokeState =>
     ({data: remoteData.startLoading(state.data)});
 
-const finishLoadingJoke = (state: JokeState, value: Result<Joke, HttpError>): JokeState =>
+const doFinishLoading = (state: JokeState, value: Result<Joke, HttpError>): JokeState =>
     ({data: remoteData.ofResult(value)});
 
-export const jokeReducer: Reducer<JokeState, Action> = (state = initialState, action: Action): JokeState => {
+const reducer: Reducer<JokeState, Action> = (state = initialState, action: Action): JokeState => {
     if (!isJokeAction(action)) return state;
 
     return match(action)
-        .with({type: 'joke/start loading joke'}, () => startLoadingJoke(state))
-        .with({type: 'joke/finished loading joke'}, ({value}) => finishLoadingJoke(state, value))
+        .with({type: 'joke/start loading joke'}, () => doStartLoading(state))
+        .with({type: 'joke/finished loading joke'}, ({value}) => doFinishLoading(state, value))
         .exhaustive();
+};
+
+export const jokeState = {
+    startLoading,
+    finishedLoading,
+    reducer,
 };

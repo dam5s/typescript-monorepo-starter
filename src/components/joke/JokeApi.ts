@@ -1,9 +1,9 @@
-import ApiConfig from '../ApiConfig';
+import {env} from '../../Env';
 import * as Json from 'schemawax';
-import {http, HttpResult} from './Http';
-import {Joke} from '../stateStore/joke';
+import {http, HttpResult} from '../../networking/Http';
+import {Joke} from './JokeState';
 
-const jokeDecoder = Json.object({
+const decoder = Json.object({
     required: {
         value: Json.object(
             {required: {joke: Json.string}}
@@ -11,11 +11,11 @@ const jokeDecoder = Json.object({
     }
 });
 
-const fetchRandom = (baseUrl: string = ApiConfig.baseUrl()): HttpResult<Joke> =>
+const fetchRandom = (baseUrl: string = env.baseUrl()): HttpResult<Joke> =>
     http
         .sendRequest({method: 'GET', url: `${baseUrl}/jokes/random`})
         .flatMapOk(http.expectStatusCode(200))
-        .flatMapOk(http.decodeJson(jokeDecoder))
+        .flatMapOk(http.decodeJson(decoder))
         .mapOk((json): Joke => ({content: json.value.joke}));
 
 export const jokeApi = {

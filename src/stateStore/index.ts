@@ -1,15 +1,22 @@
-import {Action, applyMiddleware, combineReducers, createStore, Reducer} from 'redux';
-import {jokeReducer, JokeState} from './joke';
+import {Action, applyMiddleware, combineReducers, createStore, Reducer, Store} from 'redux';
+import {jokeState, JokeState} from '../components/joke/JokeState';
 import {effects} from './effects';
 
 export type AppState = {
     joke: JokeState
 };
 
-const appReducer: Reducer<AppState, Action> = combineReducers({
-    joke: jokeReducer
-});
+const appReducer: Reducer<AppState, Action> =
+    combineReducers({
+        joke: jokeState.reducer
+    });
 
-const stateEnhancer = applyMiddleware(effects.middleware);
+const stateEnhancer =
+    applyMiddleware(effects.middleware);
 
-export const stateStore = createStore(appReducer, stateEnhancer);
+const create = (): Store<AppState> =>
+    createStore(appReducer, stateEnhancer);
+
+export const stateStore = {
+    create
+};
