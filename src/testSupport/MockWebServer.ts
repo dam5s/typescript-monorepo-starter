@@ -12,7 +12,7 @@ export interface MockWebServer {
 
 export type RecordedRequest = {
     method: string | undefined,
-    url: string | undefined,
+    path: string | undefined,
     body: string,
 }
 
@@ -30,7 +30,7 @@ export const mockWebServer = (): MockWebServer => {
     const requestListener = (req: http.IncomingMessage, res: http.ServerResponse) => {
         const recordedRequest: RecordedRequest = {
             method: req.method,
-            url: req.url,
+            path: req.url,
             body: ''
         };
 

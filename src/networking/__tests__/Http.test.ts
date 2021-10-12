@@ -32,7 +32,7 @@ describe('Http module', () => {
 
             const lastRequest = server.lastRequest();
             expect(lastRequest?.method).toEqual('GET');
-            expect(lastRequest?.url).toEqual('/foo/bar');
+            expect(lastRequest?.path).toEqual('/foo/bar');
         });
 
         test('on connection issue', async () => {
