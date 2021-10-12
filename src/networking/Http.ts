@@ -3,46 +3,49 @@ import {asyncResult, AsyncResult} from '../prelude/AsyncResult';
 import {maybe} from '../prelude/Maybe';
 import {match} from 'ts-pattern';
 
-export type HttpError =
-    | { type: 'connection error' }
-    | { type: 'unexpected status code', expected: number, response: Response }
-    | { type: 'deserialization error', response: Response }
+export declare namespace Http {
 
-export type HttpRequest =
-    | { method: 'GET', url: string }
+    type Error =
+        | { type: 'connection error' }
+        | { type: 'unexpected status code', expected: number, response: Response }
+        | { type: 'deserialization error', response: Response }
 
-export type HttpResult<T> = AsyncResult<T, HttpError>
+    type Request =
+        | { method: 'GET', url: string }
 
-const connectionError: HttpError =
+    type Result<T> = AsyncResult<T, Error>
+}
+
+const connectionError: Http.Error =
     {type: 'connection error'};
 
-const unexpectedStatusCode = (expected: number, response: Response): HttpError =>
+const unexpectedStatusCode = (expected: number, response: Response): Http.Error =>
     ({type: 'unexpected status code', expected, response});
 
-const deserializationError = (response: Response): HttpError =>
+const deserializationError = (response: Response): Http.Error =>
     ({type: 'deserialization error', response});
 
-const requestInit = (request: HttpRequest): RequestInit =>
+const requestInit = (request: Http.Request): RequestInit =>
     ({method: request.method});
 
-const sendRequest = (request: HttpRequest): HttpResult<Response> =>
+const sendRequest = (request: Http.Request): Http.Result<Response> =>
     asyncResult
         .ofPromise(fetch(request.url, requestInit(request)))
-        .mapErr((): HttpError => connectionError);
+        .mapErr((): Http.Error => connectionError);
 
-const expectStatusCode = (expected: number) => (response: Response): HttpResult<Response> =>
+const expectStatusCode = (expected: number) => (response: Response): Http.Result<Response> =>
     match(response.status)
-        .with(expected, () => asyncResult.ok<Response, HttpError>(response))
+        .with(expected, () => asyncResult.ok<Response, Http.Error>(response))
         .otherwise(() => asyncResult.err(unexpectedStatusCode(expected, response)));
 
-const decodeJson = <T>(decoder: Decoder<T>) => (response: Response): HttpResult<T> =>
+const decodeJson = <T>(decoder: Decoder<T>) => (response: Response): Http.Result<T> =>
     asyncResult
         .ofPromise(response.json())
         .mapErr(() => deserializationError(response))
         .flatMapOk(object =>
             maybe.of(decoder.decode(object) || undefined)
-                .map(json => asyncResult.ok<T, HttpError>(json))
-                .orElse(asyncResult.err<T, HttpError>(deserializationError(response)))
+                .map(json => asyncResult.ok<T, Http.Error>(json))
+                .orElse(asyncResult.err<T, Http.Error>(deserializationError(response)))
         );
 
 export const http = {

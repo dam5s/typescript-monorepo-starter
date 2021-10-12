@@ -16,7 +16,7 @@ export type RecordedRequest = {
     body: string,
 }
 
-export const mockWebServer = (): MockWebServer => {
+const create = (): MockWebServer => {
 
     let code = 200;
     let body = 'Hello, World!';
@@ -76,4 +76,8 @@ export const mockWebServer = (): MockWebServer => {
         lastRequest: () => lastRequest,
         asyncLastRequest: () => promise,
     };
+};
+
+export const mockWebServer = {
+    create,
 };

@@ -2,7 +2,7 @@ import {Action, Reducer} from 'redux';
 import {match} from 'ts-pattern';
 import {Result} from '../../prelude/Result';
 import {remoteData, RemoteData} from '../../prelude/RemoteData';
-import {HttpError} from '../../networking/Http';
+import {Http} from '../../networking/Http';
 
 /* State */
 
@@ -11,7 +11,7 @@ export type Joke = {
 };
 
 export type JokeState = {
-    data: RemoteData<Joke, HttpError>
+    data: RemoteData<Joke, Http.Error>
 };
 
 const initialState: JokeState = {
@@ -20,9 +20,9 @@ const initialState: JokeState = {
 
 /* Actions */
 
-export type JokeAction =
+type JokeAction =
     | { type: 'joke/start loading joke' }
-    | { type: 'joke/finished loading joke', value: Result<Joke, HttpError> }
+    | { type: 'joke/finished loading joke', value: Result<Joke, Http.Error> }
 
 const isJokeAction = (variable: unknown): variable is JokeAction =>
     (variable as JokeAction).type.startsWith('joke/');
@@ -30,7 +30,7 @@ const isJokeAction = (variable: unknown): variable is JokeAction =>
 const startLoading: JokeAction =
     {type: 'joke/start loading joke'};
 
-const finishedLoading = (value: Result<Joke, HttpError>): JokeAction =>
+const finishedLoading = (value: Result<Joke, Http.Error>): JokeAction =>
     ({type: 'joke/finished loading joke', value});
 
 /* Reducer */
@@ -38,7 +38,7 @@ const finishedLoading = (value: Result<Joke, HttpError>): JokeAction =>
 const doStartLoading = (state: JokeState): JokeState =>
     ({data: remoteData.startLoading(state.data)});
 
-const doFinishLoading = (state: JokeState, value: Result<Joke, HttpError>): JokeState =>
+const doFinishLoading = (state: JokeState, value: Result<Joke, Http.Error>): JokeState =>
     ({data: remoteData.ofResult(value)});
 
 const reducer: Reducer<JokeState, Action> = (state = initialState, action: Action): JokeState => {

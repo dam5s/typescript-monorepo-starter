@@ -9,16 +9,8 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
-    "quotes": [
-      "error",
-      "single",
-      {
-        "avoidEscape": true
-      }
-    ],
-    "semi": [
-      "error",
-      "always"
-    ]
+    "@typescript-eslint/no-namespace": [2, {"allowDeclarations": true}],
+    "quotes": ["error", "single", {"avoidEscape": true}],
+    "semi": ["error", "always"]
   }
 }
