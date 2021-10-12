@@ -4,8 +4,7 @@ import {render, screen} from '@testing-library/react';
 import {mockWebServer, MockWebServer} from '../../../testSupport/MockWebServer';
 import {stateStore} from '../../../stateStore';
 import {Provider} from 'react-redux';
-import 'whatwg-fetch';
-import {env} from '../../../Env';
+import {env} from '../../../config/Env';
 
 describe('Joke component', () => {
 

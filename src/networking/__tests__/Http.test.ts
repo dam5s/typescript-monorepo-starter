@@ -1,6 +1,5 @@
 import {MockWebServer, mockWebServer} from '../../testSupport/MockWebServer';
 import {HttpRequest, http} from '../Http';
-import 'whatwg-fetch';
 import * as Json from 'schemawax';
 
 describe('Http module', () => {

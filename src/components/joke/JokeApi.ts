@@ -1,4 +1,4 @@
-import {env} from '../../Env';
+import {env} from '../../config/Env';
 import * as Json from 'schemawax';
 import {http, HttpResult} from '../../networking/Http';
 import {Joke} from './JokeState';
