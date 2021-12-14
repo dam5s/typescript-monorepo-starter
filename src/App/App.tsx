@@ -1,8 +1,8 @@
 import './App.css';
 import {ReactElement} from 'react';
 import {Provider} from 'react-redux';
-import {stateStore} from '../../stateStore';
-import {Joke} from '../joke/Joke';
+import {stateStore} from './StateStore';
+import {Joke} from '../Joke/Joke';
 import {appContext, AppContext} from './AppContext';
 
 export const App = (): ReactElement =>

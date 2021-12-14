@@ -1,10 +1,9 @@
 import {ReactElement, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppState} from '../../stateStore';
-import {render} from '../RemoteDataRenderer';
+import {AppState} from '../App/StateStore';
 import {jokeState} from './JokeState';
 import {jokeApi} from './JokeApi';
-import {appContext} from '../app/AppContext';
+import {appContext} from '../App/AppContext';
 
 export const Joke = (): ReactElement => {
     const dispatch = useDispatch();
@@ -19,7 +18,7 @@ export const Joke = (): ReactElement => {
 
     const jokeData = useSelector((state: AppState) => state.joke.data);
 
-    return render(jokeData, {
+    return jokeData.mapAll({
         whenNotLoaded: () => <article/>,
         whenLoading: () => <article>Loading...</article>,
         whenRefreshing: (joke) => <article>{joke.content}</article>,

@@ -1,6 +1,6 @@
 import * as Json from 'schemawax';
 import {Decoder} from 'schemawax';
-import {http, Http} from '../../networking/Http';
+import {http, Http} from '../Networking/Http';
 import {Joke} from './JokeState';
 
 const decoder =
@@ -20,5 +20,5 @@ const fetchRandom = (baseUrl: string): Http.Result<Joke> =>
         .flatMapOk(http.decodeJson(jokeDecoder));
 
 export const jokeApi = {
-    fetchRandom
+    fetchRandom,
 };

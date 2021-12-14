@@ -1,5 +1,5 @@
 import {Action, combineReducers, createStore, Reducer, Store} from 'redux';
-import {jokeState, JokeState} from '../components/joke/JokeState';
+import {jokeState, JokeState} from '../Joke/JokeState';
 
 export type AppState = {
     joke: JokeState
@@ -14,5 +14,5 @@ const create = (): Store<AppState> =>
     createStore(appReducer);
 
 export const stateStore = {
-    create
+    create,
 };

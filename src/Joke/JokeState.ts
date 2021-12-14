@@ -1,8 +1,8 @@
 import {Action, Reducer} from 'redux';
 import {match} from 'ts-pattern';
-import {Result} from '../../prelude/Result';
-import {remoteData, RemoteData} from '../../prelude/RemoteData';
-import {Http} from '../../networking/Http';
+import {Result} from '../Prelude/Result';
+import {remoteData, RemoteData} from '../Prelude/RemoteData';
+import {Http} from '../Networking/Http';
 
 /* State */
 

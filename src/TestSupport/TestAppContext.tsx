@@ -1,7 +1,7 @@
 import {ReactElement, ReactNode} from 'react';
-import {appContext, AppContext} from '../components/app/AppContext';
+import {appContext, AppContext} from '../App/AppContext';
 import {Provider} from 'react-redux';
-import {AppState, stateStore} from '../stateStore';
+import {AppState, stateStore} from '../App/StateStore';
 import {Store} from 'redux';
 import {MockWebServer} from './MockWebServer';
 
