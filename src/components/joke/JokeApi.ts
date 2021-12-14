@@ -1,4 +1,3 @@
-import {env} from '../../config/Env';
 import * as Json from 'schemawax';
 import {Decoder} from 'schemawax';
 import {http, Http} from '../../networking/Http';
@@ -14,7 +13,7 @@ const decoder =
 const jokeDecoder: Decoder<Joke> =
     decoder.andThen(json => ({content: json.value.joke}));
 
-const fetchRandom = (baseUrl: string = env.baseUrl()): Http.Result<Joke> =>
+const fetchRandom = (baseUrl: string): Http.Result<Joke> =>
     http
         .sendRequest({method: 'GET', url: `${baseUrl}/jokes/random`})
         .flatMapOk(http.expectStatusCode(200))

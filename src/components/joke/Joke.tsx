@@ -2,11 +2,20 @@ import {ReactElement, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppState} from '../../stateStore';
 import {render} from '../RemoteDataRenderer';
-import {effects} from '../../stateStore/effects';
+import {jokeState} from './JokeState';
+import {jokeApi} from './JokeApi';
+import {appContext} from '../app/AppContext';
 
 export const Joke = (): ReactElement => {
     const dispatch = useDispatch();
-    useEffect(() => { dispatch(effects.fetchJoke); }, []);
+    const env = appContext.use();
+
+    useEffect(() => {
+        dispatch(jokeState.startLoading);
+        jokeApi
+            .fetchRandom(env.baseApiUrl)
+            .onComplete(result => dispatch(jokeState.finishedLoading(result)));
+    }, []);
 
     const jokeData = useSelector((state: AppState) => state.joke.data);
 

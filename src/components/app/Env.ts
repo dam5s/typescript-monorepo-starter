@@ -9,9 +9,9 @@ const missingConfig = (name: string): string => {
     throw `missing env configuration: ${name}`;
 };
 
-const requireEnv = (name: string) => (): string =>
+const requireEnv = (name: string): string =>
     getEnv(name) || missingConfig(name);
 
 export const env = {
-    baseUrl: requireEnv('baseUrl')
+    require: requireEnv,
 };

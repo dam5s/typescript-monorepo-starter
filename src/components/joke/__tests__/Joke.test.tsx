@@ -1,10 +1,7 @@
-import React from 'react';
 import {Joke} from '../Joke';
 import {render, screen} from '@testing-library/react';
 import {mockWebServer, MockWebServer} from '../../../testSupport/MockWebServer';
-import {stateStore} from '../../../stateStore';
-import {Provider} from 'react-redux';
-import {env} from '../../../config/Env';
+import {TestAppContext} from '../../../testSupport/TestAppContext';
 
 describe('Joke component', () => {
 
@@ -20,11 +17,9 @@ describe('Joke component', () => {
     });
 
     test('on render', async () => {
-        env.baseUrl = () => server.url('');
-
         server.stub(200, {value: {joke: 'hello world'}});
 
-        render(<Provider store={stateStore.create()}><Joke/></Provider>);
+        render(<TestAppContext server={server}><Joke/></TestAppContext>);
 
         expect(screen.findByText('hello world')).toBeTruthy();
     });

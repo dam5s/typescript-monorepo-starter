@@ -5,6 +5,7 @@ export interface MockWebServer {
     stop: () => void;
     start: () => void;
     url: (path: string) => string,
+    baseUrl: () => string,
     stub: (newCode: number, newResponse: Record<string, unknown>) => void;
     lastRequest: () => RecordedRequest | undefined;
     asyncLastRequest: () => Promise<RecordedRequest>;
@@ -59,16 +60,19 @@ const create = (): MockWebServer => {
         });
     };
 
+    const url = (path: string) => {
+        const address = server?.address() as net.AddressInfo;
+        return `http://localhost:${address.port}${path}`;
+    };
+
     return {
         stop: () => server?.close(),
         start: () => {
             server = http.createServer(requestListener);
             server.listen(0);
         },
-        url: (path: string) => {
-            const address = server?.address() as net.AddressInfo;
-            return `http://localhost:${address.port}${path}`;
-        },
+        url,
+        baseUrl: () => url(''),
         stub: (newCode: number, newBody: Record<string, unknown>) => {
             code = newCode;
             body = JSON.stringify(newBody);
