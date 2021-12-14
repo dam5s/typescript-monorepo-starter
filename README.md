@@ -1,107 +1,80 @@
 # React Redux Starter
 
-## Some external guides
-
-* https://survivejs.com/
-* https://github.com/yakkomajuri/react-from-scratch
-
 ## Initial setup
 
 ```
 $ node --version
-v14.16.1
+v16.13.1
 
-$ vi .gitignore
-$ cat .gitginore
+$ npm init vite@latest react-redux-starter --template react-ts
 
-node_modules
+$ cd react-redux-starter 
 
-$ vi package.json
-$ cat package.json
-{}
-
-$ npm install react react-dom react-redux
-$ npm install -D \
-    typescript \
-    @types/react-dom \
-    webpack \
-    webpack-cli \
-    webpack-dev-server \
-    mini-css-extract-plugin \
-    css-loader
-
-$ npx webpack init
-
-? Which of the following JS solutions do you want to use? Typescript
-? Do you want to use webpack-dev-server? Yes
-? Do you want to simplify the creation of HTML files for your bundle? Yes
-? Which of the following CSS solutions do you want to use? CSS
-? Will you be using PostCSS in your project? No
-? Do you want to extract CSS for every file? No
-? Do you like to install prettier to format generated configuration? Yes
-? Overwrite package.json? overwrite
-? Overwrite README.md? do not overwrite
+$ npm install react-redux
 ```
 
-Now edit `package.json` to restore your project name and version.
+## Improve Typescript config
 
-You may also remove the `@webpack-cli/generators` as we won't be needing it anymore.
-
-```shell
-npm uninstall @webpack-cli/generators
-```
-
-## CSS Config
-
-Configure webpack
-
-```js
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-//...
-new MiniCssExtractPlugin()
-//...
-use: [MiniCssExtractPlugin.loader, 'css-loader']
+Edit `tsconfig.json`
+```json
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "useDefineForClassFields": true,
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+        "allowJs": false,
+        "skipLibCheck": false,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "noImplicitAny": true,
+        "jsx": "react-jsx"
+    },
+    "include": ["./src"]
+}
 ```
 
 ## Linting
 
 Install dependencies
 
-```
-npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-webpack-plugin
+```shell
+npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin vite-plugin-eslint
 ```
 
 Create `.eslintrc` file
 
 ```json
 {
-   "root": true,
-   "parser": "@typescript-eslint/parser",
-   "plugins": [
-      "@typescript-eslint"
-   ],
-   "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended"
-   ],
-   "rules": {
-      "quotes": ["error", "single", {"avoidEscape": true}],
-      "semi": ["error", "always"]
-   }
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "rules": {
+        "@typescript-eslint/no-namespace": [2, {"allowDeclarations": true}],
+        "quotes": ["error", "single", {"avoidEscape": true}],
+        "semi": ["error", "always"]
+    }
 }
 ```
 
-Configure webpack
+Configure vite
 
 ```js
-const EslintWebpackPlugin = require('eslint-webpack-plugin');
+import eslintPlugin from 'vite-plugin-eslint';
 //...
-new EslintWebpackPlugin({
-    context: 'src',
-    extensions: ['ts', 'tsx'],
-    failOnError: true,
-    failOnWarning: true,
-})
+eslintPlugin({throwOnWarning: true, throwOnError: true})
 //...
 ```
 
@@ -115,17 +88,12 @@ Add manual command for running the linter in `package.json`
 
 Add dependencies
 
-```
+```shell
 npm install -D \
-    jest \
-    @types/jest \
-    babel-jest \
-    @babel/core \
-    @babel/preset-env \
-    @babel/preset-typescript \
-    @babel/plugin-syntax-jsx \
-    @babel/preset-react \
-    @testing-library/react
+    @testing-library/jest-dom \
+    @testing-library/react \
+    @testing-library/user-event \
+    ts-jest
 ```
 
 Configure test run task in `package.json`
@@ -134,31 +102,19 @@ Configure test run task in `package.json`
     "test": "jest"
 ```
 
-Create `babel.config.json`
+Create `jest.config.js`
 
-```json
-{
-   "presets": [
-      [
-         "@babel/preset-env",
-         {
-            "targets": {
-               "node": "current"
-            }
-         }
-      ],
-      "@babel/typescript",
-      "@babel/preset-react"
-   ],
-   "plugins": [
-      "@babel/plugin-syntax-jsx"
-   ]
-}
+```js
+/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
+module.exports = {
+    preset: 'ts-jest',
+    testEnvironment: 'jsdom',
+    globals: {'ts-jest': {useESM: true}},
+};
 ```
 
 ## Writing your first component
 
-1. Convert your `index.ts` to `index.tsx`
 1. Render your component at the root, e.g.
    ```
    ReactDOM.render(

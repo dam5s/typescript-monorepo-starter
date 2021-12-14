@@ -11,7 +11,7 @@ describe('Joke component', () => {
     let server: MockWebServer;
 
     beforeEach(() => {
-        server = mockWebServer();
+        server = mockWebServer.create();
         server.start();
     });
 

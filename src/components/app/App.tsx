@@ -1,5 +1,5 @@
 import './app.css';
-import React, {ReactElement} from 'react';
+import {ReactElement} from 'react';
 import {Provider} from 'react-redux';
 import {stateStore} from '../../stateStore';
 import {Joke} from '../joke/Joke';

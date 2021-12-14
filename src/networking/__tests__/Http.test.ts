@@ -1,5 +1,5 @@
 import {MockWebServer, mockWebServer} from '../../testSupport/MockWebServer';
-import {HttpRequest, http} from '../Http';
+import {Http, http} from '../Http';
 import * as Json from 'schemawax';
 
 describe('Http module', () => {
@@ -8,7 +8,7 @@ describe('Http module', () => {
     let oldConsoleError: (message?: unknown, ...optionalParams: unknown[]) => void;
 
     beforeEach(() => {
-        server = mockWebServer();
+        server = mockWebServer.create();
         server.start();
 
         oldConsoleError = console.error;
@@ -83,7 +83,7 @@ describe('Http module', () => {
             }
         });
 
-        const createRequest = (server: MockWebServer): HttpRequest =>
+        const createRequest = (server: MockWebServer): Http.Request =>
             ({url: server.url('/users/14'), method: 'GET'});
 
         test('on successful parse', async () => {
