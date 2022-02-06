@@ -4,17 +4,26 @@ import {AppState} from '../App/StateStore';
 import {jokeState} from './JokeState';
 import {jokeApi} from './JokeApi';
 import {appContext} from '../App/AppContext';
+import {AsyncResult} from '../Prelude/AsyncResult';
+
+const useAsync = <T, E>(f: () => AsyncResult<T, E>, dependencies: unknown[] = []): void => {
+    useEffect(() => {
+        const res = f();
+        return res.cancel;
+    }, dependencies);
+};
 
 export const Joke = (): ReactElement => {
     const dispatch = useDispatch();
     const env = appContext.use();
 
-    useEffect(() => {
+    useAsync(() => {
         dispatch(jokeState.startLoading);
-        jokeApi
+
+        return jokeApi
             .fetchRandom(env.baseApiUrl)
             .onComplete(result => dispatch(jokeState.finishedLoading(result)));
-    }, []);
+    });
 
     const jokeData = useSelector((state: AppState) => state.joke.data);
 
