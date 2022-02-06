@@ -1,23 +1,16 @@
-import {ReactElement, useEffect} from 'react';
+import {ReactElement} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppState} from '../App/StateStore';
 import {jokeState} from './JokeState';
 import {jokeApi} from './JokeApi';
 import {appContext} from '../App/AppContext';
-import {AsyncResult} from '../Prelude/AsyncResult';
-
-const useAsync = <T, E>(f: () => AsyncResult<T, E>, dependencies: unknown[] = []): void => {
-    useEffect(() => {
-        const res = f();
-        return res.cancel;
-    }, dependencies);
-};
+import {useAsyncResult} from '../Prelude/UseAsyncResult';
 
 export const Joke = (): ReactElement => {
     const dispatch = useDispatch();
     const env = appContext.use();
 
-    useAsync(() => {
+    useAsyncResult(() => {
         dispatch(jokeState.startLoading);
 
         return jokeApi
