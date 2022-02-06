@@ -2,10 +2,10 @@
 module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'jsdom',
-    setupFilesAfterEnv: ['./src/testSupport/JestSetup.ts'],
+    setupFilesAfterEnv: ['./src/TestSupport/JestSetup.ts'],
     moduleNameMapper: {
-        '\\.css$': '<rootDir>/src/testSupport/AssetsStubs.js',
-        '\\.svg$': '<rootDir>/src/testSupport/AssetsStubs.js',
+        '\\.css$': '<rootDir>/src/TestSupport/AssetsStubs.js',
+        '\\.svg$': '<rootDir>/src/TestSupport/AssetsStubs.js',
     },
     globals: {'ts-jest': {useESM: true}},
 };
