@@ -13,7 +13,7 @@ export declare namespace Http {
     type Request =
         | { method: 'GET', url: string }
 
-    type Result<T> = AsyncResult<T, Error>
+    type Result<T = Response> = AsyncResult<T, Error>
 }
 
 const connectionError: Http.Error =
@@ -28,12 +28,12 @@ const deserializationError = (response: Response): Http.Error =>
 const requestInit = (request: Http.Request): RequestInit =>
     ({method: request.method});
 
-const sendRequest = (request: Http.Request): Http.Result<Response> =>
+const sendRequest = (request: Http.Request): Http.Result =>
     asyncResult
         .ofPromise(fetch(request.url, requestInit(request)))
         .mapErr((): Http.Error => connectionError);
 
-const expectStatusCode = (expected: number) => (response: Response): Http.Result<Response> =>
+const expectStatusCode = (expected: number) => (response: Response): Http.Result =>
     match(response.status)
         .with(expected, () => asyncResult.ok<Response, Http.Error>(response))
         .otherwise(() => asyncResult.err(unexpectedStatusCode(expected, response)));
