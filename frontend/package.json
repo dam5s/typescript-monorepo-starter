@@ -1,4 +1,5 @@
 {
+    "name": "frontend",
     "dependencies": {
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
@@ -26,9 +27,9 @@
         "whatwg-fetch": "^3.6.2"
     },
     "scripts": {
-        "frontend/run": "cd frontend && vite",
-        "frontend/build": "cd frontend && tsc && vite build",
-        "frontend/lint": "cd frontend && eslint src --ext .ts,.tsx",
-        "frontend/test": "cd frontend && jest"
+        "start": "vite",
+        "lint": "eslint src --ext .ts,.tsx",
+        "test": "jest",
+        "build": "tsc && vite build"
     }
 }
