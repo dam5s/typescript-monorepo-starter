@@ -1,7 +1,6 @@
 import {AppState, stateStore} from '../../App/StateStore';
 import {http} from '../../Networking/Http';
 import {result} from '../../Prelude/Result';
-import {remoteData} from '../../Prelude/RemoteData';
 import {jokeState} from '../JokeState';
 import {Store} from 'redux';
 
@@ -16,11 +15,11 @@ describe('Joke State', () => {
     const getJokeState = () => store.getState().joke;
 
     test('start loading joke', () => {
-        expect(getJokeState()).toEqual({data: remoteData.notLoaded()});
+        expect(getJokeState().data).toBeNotLoaded();
 
         store.dispatch(jokeState.startLoading);
 
-        expect(getJokeState()).toEqual({data: remoteData.loading()});
+        expect(getJokeState().data).toBeLoading();
     });
 
     describe('finished loading joke', () => {
@@ -31,7 +30,7 @@ describe('Joke State', () => {
                 jokeState.finishedLoading(result.ok(joke))
             );
 
-            expect(getJokeState()).toEqual({data: remoteData.loaded(joke)});
+            expect(getJokeState().data).toBeLoadedWith(joke);
         });
 
         test('on failure', () => {
@@ -39,7 +38,7 @@ describe('Joke State', () => {
                 jokeState.finishedLoading(result.err(http.connectionError))
             );
 
-            expect(getJokeState()).toEqual({data: remoteData.failure(http.connectionError)});
+            expect(getJokeState().data).toBeFailedWith(http.connectionError);
         });
     });
 });

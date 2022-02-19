@@ -11,6 +11,7 @@ interface RemoteDataMapper<T, E, Output> {
 
 interface RemoteDataFunctions<T, E> {
     mapAll: <Output>(mapper: RemoteDataMapper<T, E, Output>) => Output
+    orNull: () => T | null
 }
 
 type RemoteDataValue<T, E> =
@@ -26,29 +27,34 @@ export type RemoteData<T, E> =
 const notLoaded = <V, E>(): RemoteData<V, E> => ({
     type: 'not loaded',
     mapAll: mapper => mapper.whenNotLoaded(),
+    orNull: () => null,
 });
 
 const loading = <V, E>(): RemoteData<V, E> => ({
     type: 'loading',
     mapAll: mapper => mapper.whenLoading(),
+    orNull: () => null,
 });
 
 const refreshing = <V, E>(data: V): RemoteData<V, E> => ({
     type: 'refreshing',
     data,
     mapAll: mapper => mapper.whenRefreshing(data),
+    orNull: () => data,
 });
 
 const loaded = <V, E>(data: V): RemoteData<V, E> => ({
     type: 'loaded',
     data,
     mapAll: mapper => mapper.whenLoaded(data),
+    orNull: () => data,
 });
 
 const failure = <V, E>(error: E): RemoteData<V, E> => ({
     type: 'failure',
     error,
     mapAll: mapper => mapper.whenFailed(error),
+    orNull: () => null,
 });
 
 const startLoading = <V, E>(data: RemoteData<V, E>): RemoteData<V, E> =>
