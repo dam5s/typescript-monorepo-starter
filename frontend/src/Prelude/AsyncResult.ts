@@ -20,7 +20,7 @@ type CancellationToken = {
 }
 
 const createToken = () => ({
-    isCancelled: false
+    isCancelled: false,
 });
 
 const newAsyncResult = <T, E>(promise: Promise<Result<T, E>>, token: CancellationToken): AsyncResult<T, E> => {
@@ -67,7 +67,7 @@ const newAsyncResult = <T, E>(promise: Promise<Result<T, E>>, token: Cancellatio
         promise,
         cancel: () => {
             token.isCancelled = true;
-        }
+        },
     };
 };
 
@@ -99,5 +99,5 @@ const err = <T, E>(reason: E): AsyncResult<T, E> => {
 export const asyncResult = {
     ofPromise,
     ok,
-    err
+    err,
 };

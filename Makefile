@@ -15,17 +15,26 @@ frontend/install: ## Install frontend dependencies
 
 .PHONY: install
 install: backend/install frontend/install ## Install all dependencies
+	npm install
+
+.PHONY: backend/lint
+backend/lint: backend/install ## Lint backend
+	npm --prefix backend run lint
 
 .PHONY: backend/test
-backend/test: backend/install ## Test backend
+backend/test: backend/lint ## Test backend
 	npm --prefix backend run test
 
 .PHONY: backend/build
 backend/build: backend/test ## Build backend
 	npm --prefix backend run build
 
+.PHONY: frontend/lint
+frontend/lint: frontend/install ## Lint frontend
+	npm --prefix frontend run lint
+
 .PHONY: frontend/test
-frontend/test: frontend/install ## Test frontend
+frontend/test: frontend/lint ## Test frontend
 	npm --prefix frontend run test
 
 .PHONY: frontend/build

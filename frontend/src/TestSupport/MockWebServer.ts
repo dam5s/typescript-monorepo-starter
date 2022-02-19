@@ -32,7 +32,7 @@ const create = (): MockWebServer => {
         const recordedRequest: RecordedRequest = {
             method: req.method,
             path: req.url,
-            body: ''
+            body: '',
         };
 
         res.setHeader('Access-Control-Allow-Credentials', 'true');

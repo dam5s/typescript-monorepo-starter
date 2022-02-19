@@ -37,5 +37,5 @@ const err = <T, E>(reason: E): Result<T, E> => ({
 
 export const result = {
     ok,
-    err
+    err,
 };

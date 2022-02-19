@@ -15,7 +15,7 @@ export type JokeState = {
 };
 
 const initialState: JokeState = {
-    data: remoteData.notLoaded()
+    data: remoteData.notLoaded(),
 };
 
 /* Actions */

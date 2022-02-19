@@ -25,6 +25,6 @@ export const Joke = (): ReactElement => {
         whenLoading: () => <article>Loading...</article>,
         whenRefreshing: (joke) => <article>{joke.content}</article>,
         whenLoaded: (joke) => <article>{joke.content}</article>,
-        whenFailed: () => <article>Error while loading</article>
+        whenFailed: () => <article>Error while loading</article>,
     });
 };

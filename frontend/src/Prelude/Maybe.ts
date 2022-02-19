@@ -33,5 +33,5 @@ const of = <T>(value: T | undefined): Maybe<T> =>
 export const maybe = {
     of,
     some,
-    none
+    none,
 };

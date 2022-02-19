@@ -80,7 +80,7 @@ describe('Http module', () => {
             required: {
                 id: Json.number,
                 name: Json.string,
-            }
+            },
         });
 
         const createRequest = (server: MockWebServer): Http.Request =>

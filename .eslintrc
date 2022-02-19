@@ -12,6 +12,7 @@
         "@typescript-eslint/no-namespace": [2, {"allowDeclarations": true}],
         "quotes": ["error", "single", {"avoidEscape": true}],
         "semi": ["error", "always"],
+        "comma-dangle": ["error", "always-multiline"],
         "@typescript-eslint/no-empty-interface": [2, {"allowSingleExtends": true}]
     }
 }

@@ -12,7 +12,7 @@ const create = (options: ServerOptions = defaultOptions) => {
 
     const server = Hapi.server({
         port: options.port,
-        host: '0.0.0.0'
+        host: '0.0.0.0',
     });
 
     server.route(jokeRoute.create());

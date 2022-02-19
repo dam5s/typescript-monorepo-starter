@@ -76,5 +76,5 @@ export const remoteData = {
     loaded,
     failure,
     startLoading,
-    ofResult
+    ofResult,
 };

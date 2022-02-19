@@ -6,8 +6,8 @@ import {Joke} from './JokeState';
 const decoder =
     Json.object({
         required: {
-            value: Json.object({required: {joke: Json.string}})
-        }
+            value: Json.object({required: {joke: Json.string}}),
+        },
     });
 
 const jokeDecoder: Decoder<Joke> =

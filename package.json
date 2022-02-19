@@ -1,0 +1,11 @@
+{
+    "name": "root",
+    "devDependencies": {
+        "@types/jest": "^27.4.0",
+        "@typescript-eslint/eslint-plugin": "^5.12.0",
+        "@typescript-eslint/parser": "^5.12.0",
+        "eslint": "^8.9.0",
+        "ts-jest": "^27.1.3",
+        "typescript": "^4.5.5"
+    }
+}

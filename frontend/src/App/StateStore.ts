@@ -7,7 +7,7 @@ export type AppState = {
 
 const appReducer: Reducer<AppState, Action> =
     combineReducers({
-        joke: jokeState.reducer
+        joke: jokeState.reducer,
     });
 
 const create = (): Store<AppState> =>
