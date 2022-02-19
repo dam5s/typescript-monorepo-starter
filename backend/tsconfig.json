@@ -13,7 +13,8 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noImplicitAny": true,
-        "outDir": "./dist"
+        "outDir": "./dist",
     },
-    "include": ["./src"]
+    "include": ["./src"],
+    "exclude": ["./src/**/__tests__/*.ts"],
 }
