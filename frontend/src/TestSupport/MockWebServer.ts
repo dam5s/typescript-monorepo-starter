@@ -1,9 +1,9 @@
 import http from 'http';
 import net from 'net';
+import {createHttpTerminator} from 'http-terminator';
 
 export interface MockWebServer {
-    stop: () => void;
-    start: () => void;
+    stop: () => Promise<void>;
     url: (path: string) => string,
     baseUrl: () => string,
     stub: (newCode: number, newResponse: Record<string, unknown>) => void;
@@ -22,7 +22,6 @@ const create = (): MockWebServer => {
     let code = 200;
     let body = 'Hello, World!';
     let lastRequest: RecordedRequest | undefined;
-    let server: http.Server | undefined;
     let resolve: ((request: RecordedRequest) => void);
     const promise = new Promise<RecordedRequest>(r => {
         resolve = r;
@@ -60,17 +59,17 @@ const create = (): MockWebServer => {
         });
     };
 
+    const server = http.createServer(requestListener);
+    const terminator = createHttpTerminator({server});
+    server.listen(0);
+
     const url = (path: string) => {
-        const address = server?.address() as net.AddressInfo;
+        const address = server.address() as net.AddressInfo;
         return `http://localhost:${address.port}${path}`;
     };
 
     return {
-        stop: () => server?.close(),
-        start: () => {
-            server = http.createServer(requestListener);
-            server.listen(0);
-        },
+        stop: () => terminator.terminate(),
         url,
         baseUrl: () => url(''),
         stub: (newCode: number, newBody: Record<string, unknown>) => {

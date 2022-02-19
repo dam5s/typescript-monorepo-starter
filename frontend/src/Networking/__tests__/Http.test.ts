@@ -9,15 +9,14 @@ describe('Http module', () => {
 
     beforeEach(() => {
         server = mockWebServer.create();
-        server.start();
 
         oldConsoleError = console.error;
         console.error = () => 'do nothing';
     });
 
-    afterEach(() => {
+    afterEach(async () => {
         console.error = oldConsoleError;
-        server.stop();
+        await server.stop();
     });
 
     describe('sendRequest', () => {
@@ -35,7 +34,7 @@ describe('Http module', () => {
         });
 
         test('on connection issue', async () => {
-            server.stop();
+            await server.stop();
 
             const res = await http.sendRequest({url: 'http://localhost/incorrect/server', method: 'GET'}).promise;
 

@@ -9,11 +9,10 @@ describe('Joke component', () => {
 
     beforeEach(() => {
         server = mockWebServer.create();
-        server.start();
     });
 
-    afterEach(() => {
-        server.stop();
+    afterEach(async () => {
+        await server.stop();
     });
 
     test('on render', async () => {
