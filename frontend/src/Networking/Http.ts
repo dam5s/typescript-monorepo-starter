@@ -1,6 +1,5 @@
 import {Decoder} from 'schemawax';
-import {asyncResult, AsyncResult} from '../Prelude/AsyncResult';
-import {maybe} from '../Prelude/Maybe';
+import {asyncResult, AsyncResult, maybe} from 'prelude';
 import {match} from 'ts-pattern';
 
 export declare namespace Http {

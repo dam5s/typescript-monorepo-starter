@@ -1,5 +1,12 @@
 # React Redux Starter
 
+## Running the build
+
+```bash
+npm install
+npx jake
+```
+
 ## Initial setup
 
 ```

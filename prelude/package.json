@@ -1,0 +1,10 @@
+{
+  "name": "prelude",
+  "version": "workspace",
+  "main": "index.ts",
+  "scripts": {
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "jest",
+    "build": ""
+  }
+}

@@ -7,5 +7,5 @@ export default defineConfig({
   plugins: [
       react(),
       eslintPlugin({throwOnWarning: true, throwOnError: true}),
-  ]
+  ],
 });
