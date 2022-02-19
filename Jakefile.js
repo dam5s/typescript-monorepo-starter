@@ -38,14 +38,14 @@ project('prelude');
 project('backend');
 project('frontend');
 
-const allProjectsTask = (taskName) => {
-    desc(taskName)
-    task(taskName, [`prelude:${taskName}`, `backend:${taskName}`, `frontend:${taskName}`]);
-};
+desc('install')
+task('install', ['prelude:install', 'backend:install', 'frontend:install']);
 
-allProjectsTask('install');
-allProjectsTask('lint');
-allProjectsTask('test');
+desc('lint')
+task('lint', ['prelude:lint', 'backend:lint', 'frontend:lint']);
+
+desc('test')
+task('test', ['prelude:test', 'backend:test', 'frontend:test']);
 
 task('build', ['install', 'lint', 'test', 'backend:build', 'frontend:build']);
 task('default', ['build'])
