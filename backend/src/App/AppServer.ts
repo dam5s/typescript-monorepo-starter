@@ -1,5 +1,5 @@
 import * as Hapi from '@hapi/hapi';
-import {jokeRoute} from '../Jokes/JokeRoute';
+import {jokeRoutes} from '../Jokes/JokeRoutes';
 
 interface ServerOptions {
     port?: number
@@ -15,7 +15,7 @@ const create = (options: ServerOptions = defaultOptions) => {
         host: '0.0.0.0',
     });
 
-    server.route(jokeRoute.create());
+    server.route(jokeRoutes.all());
 
     return server;
 };
