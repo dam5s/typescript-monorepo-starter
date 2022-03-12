@@ -4,7 +4,7 @@ import {env} from './App/Env';
 
 const init = async () => {
     const server = appServer.create({
-        port: env.tryGetNumber('PORT', 3000),
+        port: env.tryGetNumber('PORT', 3001),
     });
     await server.start();
     console.log('Server running on %s', server.info.uri);

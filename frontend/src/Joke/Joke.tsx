@@ -2,7 +2,7 @@ import {ReactElement} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppState} from '../App/StateStore';
 import {jokeState} from './JokeState';
-import {jokeApi} from './JokeApi';
+import {jokesApi} from './JokesApi';
 import {appContext} from '../App/AppContext';
 import {useAsyncResult} from '../Prelude/UseAsyncResult';
 
@@ -13,7 +13,7 @@ export const Joke = (): ReactElement => {
     useAsyncResult(() => {
         dispatch(jokeState.startLoading);
 
-        return jokeApi
+        return jokesApi
             .fetchRandom(env.baseApiUrl)
             .onComplete(result => dispatch(jokeState.finishedLoading(result)));
     });

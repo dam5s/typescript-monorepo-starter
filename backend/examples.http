@@ -1,17 +1,17 @@
 ###
-GET http://0.0.0.0:3000/api/jokes/random
+GET http://0.0.0.0:3001/api/jokes/random
 
 ###
-POST http://0.0.0.0:3000/api/jokes
+POST http://0.0.0.0:3001/api/jokes
 Content-Type: application/json
 
 {"joke":  "Chuck Norris is the only man to ever defeat a brick wall in a game of tennis."}
 
 ###
-GET http://0.0.0.0:3000/api/jokes
+GET http://0.0.0.0:3001/api/jokes
 
 ###
-GET http://0.0.0.0:3000/api/jokes?search=brick
+GET http://0.0.0.0:3001/api/jokes?search=brick
 
 ###
-GET http://0.0.0.0:3000/api/jokes/2
+GET http://0.0.0.0:3001/api/jokes/2

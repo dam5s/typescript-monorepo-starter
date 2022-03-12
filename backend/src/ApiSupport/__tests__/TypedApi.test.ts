@@ -42,7 +42,7 @@ describe('TypedApi', () => {
     test('with valid body, query and path params', async () => {
         const response = await server.inject({
             method: 'POST',
-            url: 'http://localhost:3000/tenant/210/session?redirect=example.com',
+            url: 'http://localhost:3001/tenant/210/session?redirect=example.com',
             payload: validBody,
         });
 
@@ -58,7 +58,7 @@ describe('TypedApi', () => {
     test('with invalid body', async () => {
         const response = await server.inject({
             method: 'POST',
-            url: 'http://localhost:3000/tenant/210/session?redirect=example.com',
+            url: 'http://localhost:3001/tenant/210/session?redirect=example.com',
             payload: {hello: 'world'},
         });
 
@@ -68,7 +68,7 @@ describe('TypedApi', () => {
     test('with invalid query', async () => {
         const response = await server.inject({
             method: 'POST',
-            url: 'http://localhost:3000/tenant/210/session',
+            url: 'http://localhost:3001/tenant/210/session',
             payload: validBody,
         });
 
@@ -78,7 +78,7 @@ describe('TypedApi', () => {
     test('with invalid path', async () => {
         const response = await server.inject({
             method: 'POST',
-            url: 'http://localhost:3000/tenant/ABCD/session',
+            url: 'http://localhost:3001/tenant/ABCD/session',
             payload: validBody,
         });
 

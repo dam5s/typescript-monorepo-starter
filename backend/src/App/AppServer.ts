@@ -6,7 +6,7 @@ interface ServerOptions {
 }
 
 const defaultOptions: ServerOptions =
-    { port: 3000 };
+    { port: 3001 };
 
 const create = (options: ServerOptions = defaultOptions) => {
 

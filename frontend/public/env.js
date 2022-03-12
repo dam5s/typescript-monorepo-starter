@@ -1,3 +1,3 @@
 window.env = {
-    baseApiUrl: "https://api.icndb.com"
+    baseApiUrl: "/api"
 }

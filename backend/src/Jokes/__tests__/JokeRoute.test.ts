@@ -20,7 +20,7 @@ describe('JokeRoute', () => {
     test('GET /api/jokes/random', async () => {
         const response = await server.inject({
             method: 'GET',
-            url: 'http://localhost:3000/api/jokes/random',
+            url: 'http://localhost:3001/api/jokes/random',
         });
 
         expect(response.statusCode).toEqual(200);
@@ -35,7 +35,7 @@ describe('JokeRoute', () => {
     test('POST /api/jokes', async () => {
         const response = await server.inject({
             method: 'POST',
-            url: 'http://localhost:3000/api/jokes',
+            url: 'http://localhost:3001/api/jokes',
             payload: {joke: 'Another Joke'},
         });
 
@@ -53,7 +53,7 @@ describe('JokeRoute', () => {
 
         const response = await server.inject({
             method: 'GET',
-            url: 'http://localhost:3000/api/jokes',
+            url: 'http://localhost:3001/api/jokes',
         });
 
         expect(response.statusCode).toEqual(200);
@@ -70,7 +70,7 @@ describe('JokeRoute', () => {
 
         const response = await server.inject({
             method: 'GET',
-            url: 'http://localhost:3000/api/jokes?search=nother',
+            url: 'http://localhost:3001/api/jokes?search=nother',
         });
 
         expect(response.statusCode).toEqual(200);
@@ -86,7 +86,7 @@ describe('JokeRoute', () => {
 
         const response = await server.inject({
             method: 'GET',
-            url: 'http://localhost:3000/api/jokes/2',
+            url: 'http://localhost:3001/api/jokes/2',
         });
 
         expect(response.statusCode).toEqual(200);

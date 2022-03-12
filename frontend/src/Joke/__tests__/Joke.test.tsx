@@ -16,7 +16,7 @@ describe('Joke component', () => {
     });
 
     test('on render', async () => {
-        server.stub(200, {value: {joke: 'hello world'}});
+        server.stub(200, {data: {joke: 'hello world'}});
 
         render(<TestAppContext server={server}><Joke/></TestAppContext>);
 
