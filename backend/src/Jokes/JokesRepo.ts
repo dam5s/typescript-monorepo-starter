@@ -1,27 +1,38 @@
 
-export type Joke = {
-    id: number
+export type JokeFields = {
     joke: string
 }
 
+export type JokeRecord =
+    JokeFields & { id: number }
+
 export type JokesRepo = {
-    random: () => Joke
+    random: () => JokeRecord
+    add: (fields: JokeFields) => JokeRecord
 }
 
-const initialJoke: Joke = {
+const initialJoke: JokeRecord = {
     id: 1,
     joke: 'Only Chuck Norris shuts down websites without due process, not SOPA or PIPA.',
 };
 
-class InMemoryJokesRepo implements JokesRepo {
-    private jokes: Joke[] = [initialJoke];
+const create = (): JokesRepo => {
+    const jokes: JokeRecord[] = [initialJoke];
 
-    random(): Joke {
-        const index = Math.floor(Math.random() * this.jokes.length);
-        return this.jokes[index];
-    }
-}
+    return {
+        random: () => {
+            const index = Math.floor(Math.random() * jokes.length);
+            return jokes[index];
+        },
+        add: fields => {
+            const lastJoke = jokes[jokes.length - 1];
+            const newJoke = {...fields, id: lastJoke.id + 1};
+            jokes.push(newJoke);
+            return newJoke;
+        },
+    };
+};
 
 export const jokesRepo = {
-    create: () => new InMemoryJokesRepo(),
+    create,
 };
