@@ -29,7 +29,7 @@ const randomRoute = (repo: JokesRepo): ServerRoute =>
     ({
         method: 'GET',
         path: '/api/jokes/random',
-        handler: () => repo.random(),
+        handler: () => ({data: repo.random()}),
     });
 
 const addRoute = (repo: JokesRepo): ServerRoute =>
@@ -78,6 +78,7 @@ const showRoute = (repo: JokesRepo): ServerRoute =>
                 : h.response().code(204);
         },
     });
+
 
 export const jokeRoutes = {
     all: (repo: JokesRepo = jokesRepo.create()) => [

@@ -19,8 +19,8 @@ const initialJoke: JokeRecord = {
     joke: 'Only Chuck Norris shuts down websites without due process, not SOPA or PIPA.',
 };
 
-const create = (): JokesRepo => {
-    const jokes: JokeRecord[] = [initialJoke];
+const create = (initialJokes: JokeRecord[] = [initialJoke]): JokesRepo => {
+    const jokes: JokeRecord[] = initialJokes.slice();
 
     return {
         random: () => {

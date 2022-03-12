@@ -2,11 +2,11 @@ import * as Hapi from '@hapi/hapi';
 import {jokeRoutes} from '../Jokes/JokeRoutes';
 
 interface ServerOptions {
-    port?: number
+    port: number
 }
 
 const defaultOptions: ServerOptions =
-    {};
+    { port: 3000 };
 
 const create = (options: ServerOptions = defaultOptions) => {
 
