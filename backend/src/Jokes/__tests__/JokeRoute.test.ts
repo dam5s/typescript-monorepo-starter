@@ -1,6 +1,6 @@
 import {testServer} from '../../TestSupport/TestServer';
 import {Server} from '@hapi/hapi';
-import {jokeRoutes} from '../JokeRoutes';
+import {jokesRoutes} from '../JokesRoutes';
 import {JokeRecord, jokesRepo, JokesRepo} from '../JokesRepo';
 
 describe('JokeRoute', () => {
@@ -14,7 +14,7 @@ describe('JokeRoute', () => {
 
     beforeEach(() => {
         repo = jokesRepo.create(initialJokes);
-        server = testServer.create(jokeRoutes.all(repo));
+        server = testServer.create(jokesRoutes.all(repo));
     });
 
     test('GET /api/jokes/random', async () => {

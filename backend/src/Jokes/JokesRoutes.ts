@@ -80,7 +80,7 @@ const showRoute = (repo: JokesRepo): ServerRoute =>
     });
 
 
-export const jokeRoutes = {
+export const jokesRoutes = {
     all: (repo: JokesRepo = jokesRepo.create()) => [
         randomRoute(repo),
         addRoute(repo),
