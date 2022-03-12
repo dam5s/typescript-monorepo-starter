@@ -68,10 +68,10 @@ const showRoute = (repo: JokesRepo): ServerRoute =>
         path: '/api/jokes/{id}',
         decoders: {
             ...typedApi.decoders,
-            route: showPathParamsDecoder,
+            path: showPathParamsDecoder,
         },
-        handler: ({route}, {h}) => {
-            const maybeJoke = repo.find(route.id);
+        handler: ({path}, {h}) => {
+            const maybeJoke = repo.find(path.id);
 
             return maybeJoke
                 ? h.response({data: maybeJoke})

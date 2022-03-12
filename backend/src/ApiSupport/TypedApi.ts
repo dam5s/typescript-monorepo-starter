@@ -5,16 +5,16 @@ import Decoders = TypedApi.Decoders;
 
 export declare namespace TypedApi {
 
-    type Decoders<Body=unknown, Query=unknown, Route=unknown> = {
+    type Decoders<Body=unknown, Query=unknown, Path=unknown> = {
         body: schema.Decoder<Body>
         query: schema.Decoder<Query>
-        route: schema.Decoder<Route>
+        path: schema.Decoder<Path>
     }
 
-    type Params<Body, Query, Route> = {
+    type Params<Body, Query, Path> = {
         body: Body
         query: Query
-        route: Route
+        path: Path
     }
 
     type HapiObjects = {
@@ -22,37 +22,37 @@ export declare namespace TypedApi {
         h: ResponseToolkit
     }
 
-    type Handler<Body, Query, Route> =
-        (params: Params<Body, Query, Route>, hapi: HapiObjects) => ResponseObject
+    type Handler<Body, Query, Path> =
+        (params: Params<Body, Query, Path>, hapi: HapiObjects) => ResponseObject
 
-    type RouteOptions<Body, Query, Route> = {
+    type RouteOptions<Body, Query, Path> = {
         method: 'POST' | 'GET' | 'DELETE' | 'PUT' | 'PATCH'
         path: string
-        decoders: Decoders<Body, Query, Route>
-        handler: Handler<Body, Query, Route>
+        decoders: Decoders<Body, Query, Path>
+        handler: Handler<Body, Query, Path>
     }
 }
 
 const decoders: Decoders = {
     body: schema.unknown,
     query: schema.unknown,
-    route: schema.unknown,
+    path: schema.unknown,
 };
 
-const route = <Body, Query=unknown, Route=unknown>(options: TypedApi.RouteOptions<Body, Query, Route>): ServerRoute => ({
+const route = <Body, Query=unknown, Path=unknown>(options: TypedApi.RouteOptions<Body, Query, Path>): ServerRoute => ({
     method: options.method,
     path: options.path,
     handler: (request, h) => {
         const decoders = options.decoders;
         const bodyDecode = decoders.body.validate(request.payload);
         const queryDecode = decoders.query.validate(request.query);
-        const routeDecode = decoders.route.validate(request.params);
+        const pathDecode = decoders.path.validate(request.params);
 
-        if (bodyDecode.type === 'ok' && queryDecode.type === 'ok' && routeDecode.type === 'ok') {
+        if (bodyDecode.type === 'ok' && queryDecode.type === 'ok' && pathDecode.type === 'ok') {
             const params = {
                 body: bodyDecode.data,
                 query: queryDecode.data,
-                route: routeDecode.data,
+                path: pathDecode.data,
             };
             return options.handler(params, {request, h});
         }
