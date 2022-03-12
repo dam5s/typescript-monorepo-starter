@@ -1,14 +1,16 @@
 
 export type JokeFields = {
-    joke: string
+    readonly joke: string
 }
 
 export type JokeRecord =
-    JokeFields & { id: number }
+    JokeFields & { readonly id: number }
 
 export type JokesRepo = {
     random: () => JokeRecord
     add: (fields: JokeFields) => JokeRecord
+    findAll: () => JokeRecord[]
+    search: (query: string) => JokeRecord[]
 }
 
 const initialJoke: JokeRecord = {
@@ -30,6 +32,10 @@ const create = (): JokesRepo => {
             jokes.push(newJoke);
             return newJoke;
         },
+        findAll: () =>
+            jokes.slice(),
+        search: (query: string) =>
+            jokes.slice().filter(it => it.joke.includes(query)),
     };
 };
 

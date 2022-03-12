@@ -1,7 +1,6 @@
 ###
 GET http://0.0.0.0:3000/api/jokes/random
 
-
 ###
 POST http://0.0.0.0:3000/api/jokes
 Content-Type: application/json
@@ -10,3 +9,6 @@ Content-Type: application/json
 
 ###
 GET http://0.0.0.0:3000/api/jokes
+
+###
+GET http://0.0.0.0:3000/api/jokes?search=brick
