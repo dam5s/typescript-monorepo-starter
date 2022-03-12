@@ -2,7 +2,7 @@ import {ServerRoute} from '@hapi/hapi';
 import {JokeFields, jokesRepo, JokesRepo} from './JokesRepo';
 import * as schema from 'schemawax';
 import {typedApi} from '../ApiSupport/TypedApi';
-import {decode} from '../ApiSupport/Decode';
+import {decoders} from '../ApiSupport/Decoders';
 
 type SearchQuery =
     { search?: string }
@@ -21,7 +21,7 @@ const searchQueryDecoder: schema.Decoder<SearchQuery> =
 
 const showPathParamsDecoder: schema.Decoder<ShowPathParams> =
     schema.object({
-        required: {id: decode.stringToInt},
+        required: {id: decoders.stringToInt},
     });
 
 

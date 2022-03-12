@@ -11,6 +11,6 @@ const stringToInt: schema.Decoder<number> =
         return maybeInt;
     });
 
-export const decode = {
+export const decoders = {
     stringToInt,
 };
