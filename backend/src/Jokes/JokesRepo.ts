@@ -9,6 +9,7 @@ export type JokeRecord =
 export type JokesRepo = {
     random: () => JokeRecord
     add: (fields: JokeFields) => JokeRecord
+    find: (id: number) => JokeRecord|undefined
     findAll: () => JokeRecord[]
     search: (query: string) => JokeRecord[]
 }
@@ -32,6 +33,8 @@ const create = (): JokesRepo => {
             jokes.push(newJoke);
             return newJoke;
         },
+        find: (id: number) =>
+            jokes.find(it => it.id === id),
         findAll: () =>
             jokes.slice(),
         search: (query: string) =>

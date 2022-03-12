@@ -12,3 +12,6 @@ GET http://0.0.0.0:3000/api/jokes
 
 ###
 GET http://0.0.0.0:3000/api/jokes?search=brick
+
+###
+GET http://0.0.0.0:3000/api/jokes/2
