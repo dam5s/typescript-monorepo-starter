@@ -27,6 +27,11 @@ const projectTasks = (projectDir) => {
     task('build', ['test'], async () => {
         await execOrExit('npm run build');
     });
+
+    desc(`${projectName} - start`)
+    task('start', ['fromProjectDir'], async () => {
+        await execOrExit('npm run start');
+    });
 };
 
 module.exports = {

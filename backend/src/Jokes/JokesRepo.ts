@@ -1,3 +1,4 @@
+import {jokesData} from './JokesData';
 
 export type JokeFields = {
     readonly joke: string
@@ -14,12 +15,7 @@ export type JokesRepo = {
     search: (query: string) => JokeRecord[]
 }
 
-const initialJoke: JokeRecord = {
-    id: 1,
-    joke: 'Only Chuck Norris shuts down websites without due process, not SOPA or PIPA.',
-};
-
-const create = (initialJokes: JokeRecord[] = [initialJoke]): JokesRepo => {
+const create = (initialJokes: JokeRecord[] = jokesData): JokesRepo => {
     const jokes: JokeRecord[] = initialJokes.slice();
 
     return {
