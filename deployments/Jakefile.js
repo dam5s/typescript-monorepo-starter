@@ -12,7 +12,7 @@ const backendProjectDir = path.join(rootDir, 'backend')
 const backendDist = path.join(backendProjectDir, 'dist')
 
 desc('app - Create container')
-task('app', [], async () => {
+task('app', ['frontend:build', 'backend:build'], async () => {
     fs.rmSync(appBuildDir, {recursive: true, force: true})
     fs.mkdirSync(appBuildDir, {recursive: true});
     fs.cpSync(path.join(projectDir, 'app'), path.join(appBuildDir), {recursive: true})
