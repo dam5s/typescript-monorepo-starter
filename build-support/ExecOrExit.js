@@ -1,6 +1,8 @@
 const {exec} = require('child_process');
 
 const execOrExit = cmd => {
+    console.log('Executing command:', cmd);
+
     let resolve = () => {};
     const promise = new Promise(r => { resolve = r; });
     const print = data => console.log(data.replace('\n', ''));
