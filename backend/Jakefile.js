@@ -1,3 +1,3 @@
-let {projectTasks} = require('../build-support/ProjectTasks');
+const {projectTasks} = require('../build-support/ProjectTasks');
 
 projectTasks(__dirname);

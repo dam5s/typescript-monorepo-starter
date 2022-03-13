@@ -22,7 +22,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install pack-cli
 
-      - name: Build
+      - name: Build app container
         run: |
           npm install
-          npx jake build
+          npx jake deployments:app
