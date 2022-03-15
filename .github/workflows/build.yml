@@ -26,3 +26,15 @@ jobs:
         run: |
           npm install
           npx jake deployments:app
+
+      - name: Save app artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app
+          path: deployments/build/app.tgz
+
+      - name: Save app container
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-container
+          path: deployments/build/app-container.tgz

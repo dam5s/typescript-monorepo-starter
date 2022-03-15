@@ -54,4 +54,9 @@ task('app', ['frontend:build', 'backend:build'], async () => {
         '--buildpack gcr.io/paketo-buildpacks/nodejs ' +
         '--buildpack gcr.io/paketo-buildpacks/node-run-script '
     );
+
+    process.chdir(buildDir)
+
+    await execOrExit('tar czf app.tgz app')
+    await execOrExit(`docker save starter-app:latest | gzip > app-container.tgz`)
 });
