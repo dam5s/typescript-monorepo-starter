@@ -31,8 +31,7 @@ const buildPackageJson = () => {
     fs.writeFileSync(path.join(appBuildDir, 'package.json'), newPackageJsonString)
 };
 
-desc('app - Create container')
-task('app', ['frontend:build', 'backend:build'], async () => {
+task('app-container-only', async () => {
     fs.cpSync(path.join(projectDir, 'app'), path.join(appBuildDir), {recursive: true})
 
     fs.cpSync(frontendDist, path.join(appBuildDir, 'frontend'), {recursive: true})
@@ -60,3 +59,6 @@ task('app', ['frontend:build', 'backend:build'], async () => {
     await execOrExit('tar czf app.tgz app')
     await execOrExit(`docker save starter-app:latest | gzip > app-container.tgz`)
 });
+
+desc('app - Create container')
+task('app', ['frontend:build', 'backend:build', 'app-container-only']);
