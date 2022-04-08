@@ -1,7 +1,6 @@
-import {typedApi} from '../TypedApi';
 import * as schema from 'schemawax';
-import {decoders} from '../Decoders';
-import {appServer} from '../../App/AppServer';
+import {decoders, typedApi} from '..';
+import {appServer} from '../../App';
 
 describe('TypedApi', () => {
 

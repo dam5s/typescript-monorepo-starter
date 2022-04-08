@@ -1,8 +1,7 @@
+import * as schema from 'schemawax';
 import {ServerRoute} from '@hapi/hapi';
 import {JokeFields, jokesRepo} from './JokesRepo';
-import * as schema from 'schemawax';
-import {typedApi} from '../ApiSupport/TypedApi';
-import {decoders} from '../ApiSupport/Decoders';
+import {decoders, typedApi} from '../ApiSupport';
 
 type SearchQuery =
     { search?: string }

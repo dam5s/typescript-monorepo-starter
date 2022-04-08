@@ -1,9 +1,8 @@
 import {Server} from '@hapi/hapi';
-import {jokesApi} from '../JokesApi';
-import {JokeRecord, jokesRepo, JokesRepo} from '../JokesRepo';
-import {appServer} from '../../App/AppServer';
+import {jokesApi, JokeRecord, jokesRepo, JokesRepo} from '..';
+import {appServer} from '../../App';
 
-describe('JokeRoute', () => {
+describe('JokesApi', () => {
 
     let server: Server;
     let repo: JokesRepo;

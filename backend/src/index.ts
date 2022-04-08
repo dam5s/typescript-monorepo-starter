@@ -1,5 +1,4 @@
-import {appServer} from './App/AppServer';
-import {env} from './App/Env';
+import {appServer, env} from './App';
 
 
 const init = async () => {

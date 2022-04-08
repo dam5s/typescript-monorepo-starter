@@ -1,5 +1,5 @@
 import * as Hapi from '@hapi/hapi';
-import {jokesApi} from '../Jokes/JokesApi';
+import {jokesApi} from '../Jokes';
 import {healthApi} from './HealthApi';
 
 const defaultRoutes = [
