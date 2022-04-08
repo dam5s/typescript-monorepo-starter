@@ -8,7 +8,7 @@ import {useAsyncResult} from '../Prelude/UseAsyncResult';
 
 export const Joke = (): ReactElement => {
     const dispatch = useDispatch();
-    const env = appContext.use();
+    const env = appContext.get();
 
     useAsyncResult(() => {
         dispatch(jokeState.startLoading);

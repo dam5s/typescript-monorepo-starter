@@ -5,17 +5,12 @@ import * as Json from 'schemawax';
 describe('Http module', () => {
 
     let server: MockWebServer;
-    let oldConsoleError: (message?: unknown, ...optionalParams: unknown[]) => void;
 
     beforeEach(() => {
         server = mockWebServer.create();
-
-        oldConsoleError = console.error;
-        console.error = () => 'do nothing';
     });
 
     afterEach(async () => {
-        console.error = oldConsoleError;
         await server.stop();
     });
 
@@ -70,7 +65,7 @@ describe('Http module', () => {
 
     describe('decodeJson', () => {
 
-        interface JsonType {
+        type JsonType = {
             id: number,
             name: string,
         }

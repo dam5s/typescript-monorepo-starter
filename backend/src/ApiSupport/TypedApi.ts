@@ -23,7 +23,7 @@ export declare namespace TypedApi {
     }
 
     type Handler<Body, Query, Path> =
-        (params: Params<Body, Query, Path>, hapi: HapiObjects) => ResponseObject
+        (params: Params<Body, Query, Path>, hapi: HapiObjects) => ResponseObject | Promise<ResponseObject>
 
     type RouteOptions<Body, Query, Path> = {
         method: 'POST' | 'GET' | 'DELETE' | 'PUT' | 'PATCH'

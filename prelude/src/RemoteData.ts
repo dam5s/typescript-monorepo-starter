@@ -1,7 +1,7 @@
 import {match} from 'ts-pattern';
 import {Result} from './Result';
 
-interface RemoteDataMapper<T, E, Output> {
+type RemoteDataMapper<T, E, Output> = {
     whenNotLoaded: () => Output,
     whenLoading: () => Output,
     whenRefreshing: (value: T) => Output,
@@ -9,7 +9,7 @@ interface RemoteDataMapper<T, E, Output> {
     whenFailed: (error: E) => Output
 }
 
-interface RemoteDataFunctions<T, E> {
+type RemoteDataFunctions<T, E> = {
     mapAll: <Output>(mapper: RemoteDataMapper<T, E, Output>) => Output
     orNull: () => T | null
 }

@@ -2,7 +2,7 @@ import http from 'http';
 import net from 'net';
 import {createHttpTerminator} from 'http-terminator';
 
-export interface MockWebServer {
+export type MockWebServer = {
     stop: () => Promise<void>;
     url: (path: string) => string,
     baseUrl: () => string,

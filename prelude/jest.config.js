@@ -5,5 +5,5 @@ module.exports = {
     setupFilesAfterEnv: [
         './src/RemoteDataMatchers.ts'
     ],
-    globals: {'ts-jest': {useESM: true}},
+    globals: {'ts-jest': {useESM: true, isolatedModules: true}},
 };

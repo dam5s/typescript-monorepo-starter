@@ -1,5 +1,5 @@
 import {ServerRoute} from '@hapi/hapi';
-import {JokeFields, jokesRepo, JokesRepo} from './JokesRepo';
+import {JokeFields, jokesRepo} from './JokesRepo';
 import * as schema from 'schemawax';
 import {typedApi} from '../ApiSupport/TypedApi';
 import {decoders} from '../ApiSupport/Decoders';
@@ -25,14 +25,14 @@ const showPathParamsDecoder: schema.Decoder<ShowPathParams> =
     });
 
 
-const randomRoute = (repo: JokesRepo): ServerRoute =>
+const randomRoute = (deps: Dependencies): ServerRoute =>
     ({
         method: 'GET',
         path: '/api/jokes/random',
-        handler: () => ({data: repo.random()}),
+        handler: async () => ({data: await deps.randomJoke()}),
     });
 
-const addRoute = (repo: JokesRepo): ServerRoute =>
+const addRoute = (deps: Dependencies): ServerRoute =>
     typedApi.route<JokeFields>({
         method: 'POST',
         path: '/api/jokes',
@@ -40,13 +40,13 @@ const addRoute = (repo: JokesRepo): ServerRoute =>
             ...typedApi.decoders,
             body: fieldsDecoder,
         },
-        handler: ({body}, {h}) => {
-            const data = repo.add(body);
+        handler: async ({body}, {h}) => {
+            const data = await deps.addJoke(body);
             return h.response({data}).code(201);
         },
     });
 
-const listRoute = (repo: JokesRepo): ServerRoute =>
+const listRoute = (deps: Dependencies): ServerRoute =>
     typedApi.route<unknown, SearchQuery>({
         method: 'GET',
         path: '/api/jokes',
@@ -54,15 +54,15 @@ const listRoute = (repo: JokesRepo): ServerRoute =>
             ...typedApi.decoders,
             query: searchQueryDecoder,
         },
-        handler: ({query}, {h}) => {
+        handler: async ({query}, {h}) => {
             const data = query.search
-                ? repo.search(query.search)
-                : repo.findAll();
+                ? await deps.searchJokes(query.search)
+                : await deps.findAllJokes();
             return h.response({data});
         },
     });
 
-const showRoute = (repo: JokesRepo): ServerRoute =>
+const showRoute = (deps: Dependencies): ServerRoute =>
     typedApi.route<unknown, unknown, ShowPathParams>({
         method: 'GET',
         path: '/api/jokes/{id}',
@@ -70,8 +70,8 @@ const showRoute = (repo: JokesRepo): ServerRoute =>
             ...typedApi.decoders,
             path: showPathParamsDecoder,
         },
-        handler: ({path}, {h}) => {
-            const maybeJoke = repo.find(path.id);
+        handler: async ({path}, {h}) => {
+            const maybeJoke = await deps.findJoke(path.id);
 
             return maybeJoke
                 ? h.response({data: maybeJoke})
@@ -79,12 +79,21 @@ const showRoute = (repo: JokesRepo): ServerRoute =>
         },
     });
 
+const dependencies = {
+    randomJoke: jokesRepo.singleton.random,
+    addJoke: jokesRepo.singleton.add,
+    findAllJokes: jokesRepo.singleton.findAll,
+    searchJokes: jokesRepo.singleton.search,
+    findJoke: jokesRepo.singleton.find,
+};
 
-export const jokesRoutes = {
-    all: (repo: JokesRepo = jokesRepo.create()) => [
-        randomRoute(repo),
-        addRoute(repo),
-        listRoute(repo),
-        showRoute(repo),
+type Dependencies = typeof dependencies;
+
+export const jokesApi = {
+    routes: (deps = dependencies) => [
+        randomRoute(deps),
+        addRoute(deps),
+        listRoute(deps),
+        showRoute(deps),
     ],
 };

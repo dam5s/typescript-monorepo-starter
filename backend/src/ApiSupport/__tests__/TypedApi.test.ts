@@ -1,11 +1,11 @@
-import {testServer} from '../../TestSupport/TestServer';
 import {typedApi} from '../TypedApi';
 import * as schema from 'schemawax';
 import {decoders} from '../Decoders';
+import {appServer} from '../../App/AppServer';
 
 describe('TypedApi', () => {
 
-    const server = testServer.create([
+    const server = appServer.create({routes: [
         typedApi.route({
             method: 'POST',
             path: '/tenant/{tenantId}/session',
@@ -35,7 +35,7 @@ describe('TypedApi', () => {
                     tenantId: path.tenantId,
                 }),
         }),
-    ]);
+    ]});
 
     const validBody = {username: 'bob', password: 'secret'};
 

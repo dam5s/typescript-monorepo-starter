@@ -1,7 +1,7 @@
-import {testServer} from '../../TestSupport/TestServer';
 import {Server} from '@hapi/hapi';
-import {jokesRoutes} from '../JokesRoutes';
+import {jokesApi} from '../JokesApi';
 import {JokeRecord, jokesRepo, JokesRepo} from '../JokesRepo';
+import {appServer} from '../../App/AppServer';
 
 describe('JokeRoute', () => {
 
@@ -14,7 +14,15 @@ describe('JokeRoute', () => {
 
     beforeEach(() => {
         repo = jokesRepo.create(initialJokes);
-        server = testServer.create(jokesRoutes.all(repo));
+        server = appServer.create({
+            routes: jokesApi.routes({
+                addJoke: repo.add,
+                findAllJokes: repo.findAll,
+                findJoke: repo.find,
+                randomJoke: repo.random,
+                searchJokes: repo.search,
+            }),
+        });
     });
 
     test('GET /api/jokes/random', async () => {
@@ -49,7 +57,7 @@ describe('JokeRoute', () => {
     });
 
     test('GET /api/jokes', async () => {
-        repo.add({joke: 'Joke #2'});
+        await repo.add({joke: 'Joke #2'});
 
         const response = await server.inject({
             method: 'GET',
@@ -66,7 +74,7 @@ describe('JokeRoute', () => {
     });
 
     test('GET /api/jokes?search={search}', async () => {
-        repo.add({joke: 'Another Joke'});
+        await repo.add({joke: 'Another Joke'});
 
         const response = await server.inject({
             method: 'GET',
@@ -82,7 +90,7 @@ describe('JokeRoute', () => {
     });
 
     test('GET /api/jokes/{id}', async () => {
-        repo.add({joke: 'Joke #2'});
+        await repo.add({joke: 'Joke #2'});
 
         const response = await server.inject({
             method: 'GET',

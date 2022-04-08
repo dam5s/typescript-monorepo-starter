@@ -8,36 +8,39 @@ export type JokeRecord =
     JokeFields & { readonly id: number }
 
 export type JokesRepo = {
-    random: () => JokeRecord
-    add: (fields: JokeFields) => JokeRecord
-    find: (id: number) => JokeRecord|undefined
-    findAll: () => JokeRecord[]
-    search: (query: string) => JokeRecord[]
+    random: () => Promise<JokeRecord>
+    add: (fields: JokeFields) => Promise<JokeRecord>
+    find: (id: number) => Promise<JokeRecord|undefined>
+    findAll: () => Promise<JokeRecord[]>
+    search: (query: string) => Promise<JokeRecord[]>
 }
 
 const create = (initialJokes: JokeRecord[] = jokesData): JokesRepo => {
     const jokes: JokeRecord[] = initialJokes.slice();
 
     return {
-        random: () => {
+        random: async () => {
             const index = Math.floor(Math.random() * jokes.length);
             return jokes[index];
         },
-        add: fields => {
+        add: async fields => {
             const lastJoke = jokes[jokes.length - 1];
             const newJoke = {...fields, id: lastJoke.id + 1};
             jokes.push(newJoke);
             return newJoke;
         },
-        find: (id: number) =>
+        find: async (id: number) =>
             jokes.find(it => it.id === id),
-        findAll: () =>
+        findAll: async () =>
             jokes.slice(),
-        search: (query: string) =>
+        search: async (query: string) =>
             jokes.slice().filter(it => it.joke.includes(query)),
     };
 };
 
+const singleton = create();
+
 export const jokesRepo = {
     create,
+    singleton,
 };

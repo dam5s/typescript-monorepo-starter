@@ -1,8 +1,6 @@
 {
     "name": "root",
     "workspaces": [
-        "./backend",
-        "./frontend",
         "./prelude"
     ],
     "devDependencies": {

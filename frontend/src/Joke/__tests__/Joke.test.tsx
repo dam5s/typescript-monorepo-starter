@@ -20,6 +20,6 @@ describe('Joke component', () => {
 
         render(<TestAppContext server={server}><Joke/></TestAppContext>);
 
-        expect(screen.findByText('hello world')).toBeTruthy();
+        await screen.findByText('hello world');
     });
 });

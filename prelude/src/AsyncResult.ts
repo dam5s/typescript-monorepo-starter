@@ -1,7 +1,7 @@
 import {Consumer, Mapping} from './FunctionTypes';
 import {result, Result} from './Result';
 
-export interface AsyncResult<T, E> {
+export type AsyncResult<T, E> = {
     mapOk: <NewT>(mapping: Mapping<T, NewT>) => AsyncResult<NewT, E>
     mapErr: <NewE>(mapping: Mapping<E, NewE>) => AsyncResult<T, NewE>
     onComplete: (consumer: Consumer<Result<T, E>>) => AsyncResult<T, E>
