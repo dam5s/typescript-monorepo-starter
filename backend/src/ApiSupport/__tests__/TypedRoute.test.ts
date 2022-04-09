@@ -1,13 +1,11 @@
 import * as schema from 'schemawax';
-import {decoders, typedApi} from '..';
+import {decoders, typedRoute} from '..';
 import {appServer} from '../../App';
 
-describe('TypedApi', () => {
+describe('TypedRoute', () => {
 
     const server = appServer.create({routes: [
-        typedApi.route({
-            method: 'POST',
-            path: '/tenant/{tenantId}/session',
+        typedRoute.post('/tenant/{tenantId}/session', {
             decoders: {
                 body: schema.object({
                     required: {

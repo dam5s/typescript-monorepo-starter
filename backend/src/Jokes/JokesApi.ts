@@ -1,7 +1,7 @@
 import * as schema from 'schemawax';
 import {ServerRoute} from '@hapi/hapi';
 import {JokeFields, jokesRepo} from './JokesRepo';
-import {decoders, typedApi} from '../ApiSupport';
+import {decoders, typedRoute} from '../ApiSupport';
 
 type SearchQuery =
     { search?: string }
@@ -25,20 +25,14 @@ const showPathParamsDecoder: schema.Decoder<ShowPathParams> =
 
 
 const randomRoute = (deps: Dependencies): ServerRoute =>
-    ({
-        method: 'GET',
-        path: '/api/jokes/random',
-        handler: async () => ({data: await deps.randomJoke()}),
+    typedRoute.get('/api/jokes/random', {
+        decoders: typedRoute.decoders,
+        handler: async (_, {h}) => h.response({data: await deps.randomJoke()}),
     });
 
 const addRoute = (deps: Dependencies): ServerRoute =>
-    typedApi.route<JokeFields>({
-        method: 'POST',
-        path: '/api/jokes',
-        decoders: {
-            ...typedApi.decoders,
-            body: fieldsDecoder,
-        },
+    typedRoute.post<JokeFields>('/api/jokes', {
+        decoders: {...typedRoute.decoders, body: fieldsDecoder},
         handler: async ({body}, {h}) => {
             const data = await deps.addJoke(body);
             return h.response({data}).code(201);
@@ -46,13 +40,8 @@ const addRoute = (deps: Dependencies): ServerRoute =>
     });
 
 const listRoute = (deps: Dependencies): ServerRoute =>
-    typedApi.route<unknown, SearchQuery>({
-        method: 'GET',
-        path: '/api/jokes',
-        decoders: {
-            ...typedApi.decoders,
-            query: searchQueryDecoder,
-        },
+    typedRoute.get<SearchQuery>('/api/jokes', {
+        decoders: {...typedRoute.decoders, query: searchQueryDecoder},
         handler: async ({query}, {h}) => {
             const data = query.search
                 ? await deps.searchJokes(query.search)
@@ -62,13 +51,8 @@ const listRoute = (deps: Dependencies): ServerRoute =>
     });
 
 const showRoute = (deps: Dependencies): ServerRoute =>
-    typedApi.route<unknown, unknown, ShowPathParams>({
-        method: 'GET',
-        path: '/api/jokes/{id}',
-        decoders: {
-            ...typedApi.decoders,
-            path: showPathParamsDecoder,
-        },
+    typedRoute.get<unknown, ShowPathParams>('/api/jokes/{id}', {
+        decoders: {...typedRoute.decoders, path: showPathParamsDecoder},
         handler: async ({path}, {h}) => {
             const maybeJoke = await deps.findJoke(path.id);
 
