@@ -1,5 +1,4 @@
 import {jokesData} from './JokesData';
-import {TasksApi} from '../Tasks';
 
 export type JokeFields = {
     readonly joke: string
@@ -8,13 +7,7 @@ export type JokeFields = {
 export type JokeRecord =
     JokeFields & { readonly id: number }
 
-export type TaskJoke = {
-    joke: JokeRecord
-    task: TasksApi.Task
-}
-
 export type JokesRepo = {
-    foo: () => TaskJoke
     random: () => Promise<JokeRecord>
     add: (fields: JokeFields) => Promise<JokeRecord>
     find: (id: number) => Promise<JokeRecord|undefined>
@@ -26,10 +19,6 @@ const create = (initialJokes: JokeRecord[] = jokesData): JokesRepo => {
     const jokes: JokeRecord[] = initialJokes.slice();
 
     return {
-        foo: (): TaskJoke => ({
-            task: {name: 'hi'},
-            joke: {id: 1, joke: 'nice'},
-        }),
         random: async () => {
             const index = Math.floor(Math.random() * jokes.length);
             return jokes[index];

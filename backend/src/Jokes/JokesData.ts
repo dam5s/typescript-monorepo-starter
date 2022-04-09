@@ -1,6 +1,9 @@
-import {JokeRecord} from './JokesRepo';
+type JokeData = {
+    id: number
+    joke: string
+}
 
-export const jokesData: JokeRecord[] = [
+export const jokesData: JokeData[] = [
     {
         'id': 1,
         'joke': 'Chuck Norris uses ribbed condoms inside out, so he gets the pleasure.',
