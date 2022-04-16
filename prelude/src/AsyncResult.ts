@@ -41,11 +41,11 @@ const newAsyncResult = <T, E>(promise: Promise<Result<T, E>>, token: Cancellatio
     return {
         mapOk: <NewT>(mapping: Mapping<T, NewT>): AsyncResult<NewT, E> =>
             transformWithCancellableChainer<NewT, E>((r, resolve) => {
-                resolve(r.mapOk(mapping));
+                resolve(result.mapOk(mapping, r));
             }),
         mapErr: <NewE>(mapping: Mapping<E, NewE>): AsyncResult<T, NewE> =>
             transformWithCancellableChainer<T, NewE>((r, resolve) => {
-                resolve(r.mapErr(mapping));
+                resolve(result.mapErr(mapping, r));
             }),
         onComplete: (consumer: Consumer<Result<T, E>>): AsyncResult<T, E> =>
             transformWithCancellableChainer<T, E>((r, resolve) => {
@@ -54,15 +54,19 @@ const newAsyncResult = <T, E>(promise: Promise<Result<T, E>>, token: Cancellatio
             }),
         flatMapOk: <NewT>(mapping: Mapping<T, AsyncResult<NewT, E>>): AsyncResult<NewT, E> =>
             transformWithCancellableChainer<NewT, E>((r, resolve) => {
-                r
-                    .onOk(data => mapping(data).onComplete(resolve))
-                    .onErr(reason => resolve(result.err(reason)));
+                if (r.isOk) {
+                    mapping(r.data).onComplete(resolve);
+                } else {
+                    resolve(result.err(r.reason));
+                }
             }),
         flatMapErr: <NewE>(mapping: Mapping<E, AsyncResult<T, NewE>>): AsyncResult<T, NewE> =>
             transformWithCancellableChainer<T, NewE>((r, resolve) => {
-                r
-                    .onOk(data => resolve(result.ok(data)))
-                    .onErr(reason => mapping(reason).onComplete(resolve));
+                if (r.isOk) {
+                    resolve(result.ok(r.data));
+                } else {
+                    mapping(r.reason).onComplete(resolve);
+                }
             }),
         promise,
         cancel: () => {

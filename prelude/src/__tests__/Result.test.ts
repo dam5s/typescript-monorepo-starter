@@ -7,46 +7,26 @@ describe('Result', () => {
     const err = result.err<string, Message>({message: 'Oops'});
 
     test('mapOk', () => {
-        const mappedOk = ok.mapOk(m => `Ok! ${m}`);
+        const mappedOk = result.mapOk(m => `Ok! ${m}`, ok);
 
         expect(mappedOk.isOk).toEqual(true);
         expect(mappedOk.isOk && mappedOk.data).toEqual('Ok! Very nice.');
 
-        const mappedErr = err.mapOk(m => `Ok! ${m}`);
+        const mappedErr = result.mapOk(m => `Ok! ${m}`, err);
 
         expect(mappedErr.isOk).toEqual(false);
         expect(mappedErr.isOk || mappedErr.reason).toEqual({message: 'Oops'});
     });
 
     test('mapErr', () => {
-        const mappedOk = ok.mapErr(r => ({message: `Ugh... ${r.message}`}));
+        const mappedOk = result.mapErr(r => ({message: `Ugh... ${r.message}`}), ok);
 
         expect(mappedOk.isOk).toEqual(true);
         expect(mappedOk.isOk && mappedOk.data).toEqual('Very nice.');
 
-        const mappedErr = err.mapErr(r => ({message: `Ugh... ${r.message}`}));
+        const mappedErr = result.mapErr(r => ({message: `Ugh... ${r.message}`}), err);
 
         expect(mappedErr.isOk).toEqual(false);
         expect(mappedErr.isOk || mappedErr.reason).toEqual({message: 'Ugh... Oops'});
-    });
-
-    test('onOk', () => {
-        const okCallback = jest.fn();
-        ok.onOk(okCallback);
-        expect(okCallback).toHaveBeenCalledWith('Very nice.');
-
-        const errCallback = jest.fn();
-        err.onOk(errCallback);
-        expect(errCallback).not.toHaveBeenCalled();
-    });
-
-    test('onErr', () => {
-        const okCallback = jest.fn();
-        ok.onErr(okCallback);
-        expect(okCallback).not.toHaveBeenCalled();
-
-        const errCallback = jest.fn();
-        err.onErr(errCallback);
-        expect(errCallback).toHaveBeenCalledWith({message: 'Oops'});
     });
 });
