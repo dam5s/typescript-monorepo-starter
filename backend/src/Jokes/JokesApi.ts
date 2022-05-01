@@ -3,6 +3,18 @@ import {ServerRoute} from '@hapi/hapi';
 import {JokeFields, jokesRepo} from './JokesRepo';
 import {decoders, typedRoute} from '../ApiSupport';
 
+
+const dependencies = {
+    randomJoke: jokesRepo.singleton.random,
+    addJoke: jokesRepo.singleton.add,
+    findAllJokes: jokesRepo.singleton.findAll,
+    searchJokes: jokesRepo.singleton.search,
+    findJoke: jokesRepo.singleton.find,
+};
+
+type Dependencies = typeof dependencies;
+
+
 type SearchQuery =
     { search?: string }
 
@@ -22,7 +34,6 @@ const showPathParamsDecoder: schema.Decoder<ShowPathParams> =
     schema.object({
         required: {id: decoders.stringToInt},
     });
-
 
 const randomRoute = (deps: Dependencies): ServerRoute =>
     typedRoute.get('/api/jokes/random', {
@@ -61,16 +72,6 @@ const showRoute = (deps: Dependencies): ServerRoute =>
                 : h.response().code(204);
         },
     });
-
-const dependencies = {
-    randomJoke: jokesRepo.singleton.random,
-    addJoke: jokesRepo.singleton.add,
-    findAllJokes: jokesRepo.singleton.findAll,
-    searchJokes: jokesRepo.singleton.search,
-    findJoke: jokesRepo.singleton.find,
-};
-
-type Dependencies = typeof dependencies;
 
 export const jokesApi = {
     routes: (deps = dependencies) => [
