@@ -1,4 +1,4 @@
-import {result, Result} from 'prelude';
+import {result, Result} from '../Prelude';
 import {ValidationError} from './ValidationError';
 import {ValidationInput} from './ValidationInput';
 

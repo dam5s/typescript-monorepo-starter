@@ -1,9 +1,8 @@
-import './App.css';
 import {ReactElement} from 'react';
+import {appContext, AppContext, stateStore} from '../AppState';
 import {Provider} from 'react-redux';
-import {stateStore} from './StateStore';
-import {Joke} from '../Joke/Joke';
-import {appContext, AppContext} from './AppContext';
+import {Joke} from './Joke';
+import './App.css';
 
 export const App = (): ReactElement =>
     <AppContext.Provider value={appContext.defaultEnv}>

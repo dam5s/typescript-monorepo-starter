@@ -28,7 +28,7 @@ const none = <T>(): Maybe<T> => ({
 });
 
 const of = <T>(value: T | undefined): Maybe<T> =>
-    value === undefined ? none() : some(value);
+    value === undefined ? none<T>() : some<T>(value);
 
 export const maybe = {
     of,

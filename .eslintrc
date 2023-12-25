@@ -3,7 +3,8 @@
     "parser": "@typescript-eslint/parser",
     "plugins": [
         "@typescript-eslint",
-        "import"
+        "import",
+        "functional"
     ],
     "extends": [
         "eslint:recommended",
@@ -11,39 +12,15 @@
         "plugin:import/typescript"
     ],
     "rules": {
-        "@typescript-eslint/no-namespace": [
-            2,
-            {
-                "allowDeclarations": true
-            }
-        ],
-        "quotes": [
-            "error",
-            "single",
-            {
-                "avoidEscape": true
-            }
-        ],
-        "semi": [
-            "error",
-            "always"
-        ],
-        "comma-dangle": [
-            "error",
-            "always-multiline"
-        ],
-        "@typescript-eslint/no-empty-interface": [
-            2,
-            {
-                "allowSingleExtends": true
-            }
-        ],
-        "import/no-cycle": [
-            "error",
-            {
-                "maxDepth": 10,
-                "ignoreExternal": true
-            }
-        ]
+        "@typescript-eslint/no-namespace": [2, {"allowDeclarations": true}],
+        "quotes": ["error", "single", {"avoidEscape": true}],
+        "semi": ["error", "always"],
+        "comma-dangle": ["error", "always-multiline"],
+        "@typescript-eslint/no-empty-interface": [2, {"allowSingleExtends": true}],
+        "import/no-cycle": ["error", {"maxDepth": 10, "ignoreExternal": true}],
+        "import/no-internal-modules": ["error"],
+        "functional/no-promise-reject": ["error"],
+        "functional/no-throw-statements": ["error"],
+        "functional/no-try-statements": ["error"]
     }
 }

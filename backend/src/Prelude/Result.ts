@@ -31,9 +31,15 @@ const mapErr = <T, E, NewE>(mapping: Mapping<E, NewE>, r: Result<T, E>): Result<
         ? result.ok(r.data)
         : result.err(mapping(r.reason));
 
+const unpack = <T, E>(r: Result<T, E>): T | E =>
+    r.isOk
+        ? r.data
+        : r.reason;
+
 export const result = {
     ok,
     err,
     mapOk,
     mapErr,
+    unpack,
 };

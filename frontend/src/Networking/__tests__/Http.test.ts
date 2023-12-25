@@ -1,4 +1,4 @@
-import {MockWebServer, mockWebServer} from '../../TestSupport/MockWebServer';
+import {MockWebServer, mockWebServer} from '../../TestSupport';
 import {Http, http} from '../Http';
 import * as Json from 'schemawax';
 

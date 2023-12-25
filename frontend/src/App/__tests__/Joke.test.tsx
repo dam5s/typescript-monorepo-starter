@@ -1,7 +1,6 @@
 import {Joke} from '../Joke';
 import {render, screen} from '@testing-library/react';
-import {mockWebServer, MockWebServer} from '../../TestSupport/MockWebServer';
-import {TestAppContext} from '../../TestSupport/TestAppContext';
+import {mockWebServer, MockWebServer, TestAppContext} from '../../TestSupport';
 
 describe('Joke component', () => {
 

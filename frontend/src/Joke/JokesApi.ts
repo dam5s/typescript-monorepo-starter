@@ -1,7 +1,7 @@
 import * as schema from 'schemawax';
-import {http, Http} from '../Networking/Http';
+import {http, Http} from '../Networking';
 import {Joke} from './JokeState';
-import {json} from '../ApiSupport/Json';
+import {json} from '../ApiSupport';
 
 
 const decoder =

@@ -1,4 +1,4 @@
-import {result} from '../Result';
+import {result} from '..';
 
 describe('Result', () => {
 
@@ -9,24 +9,20 @@ describe('Result', () => {
     test('mapOk', () => {
         const mappedOk = result.mapOk(m => `Ok! ${m}`, ok);
 
-        expect(mappedOk.isOk).toEqual(true);
-        expect(mappedOk.isOk && mappedOk.data).toEqual('Ok! Very nice.');
+        expect(result.unpack(mappedOk)).toEqual('Ok! Very nice.');
 
         const mappedErr = result.mapOk(m => `Ok! ${m}`, err);
 
-        expect(mappedErr.isOk).toEqual(false);
-        expect(mappedErr.isOk || mappedErr.reason).toEqual({message: 'Oops'});
+        expect(result.unpack(mappedErr)).toEqual({message: 'Oops'});
     });
 
     test('mapErr', () => {
         const mappedOk = result.mapErr(r => ({message: `Ugh... ${r.message}`}), ok);
 
-        expect(mappedOk.isOk).toEqual(true);
-        expect(mappedOk.isOk && mappedOk.data).toEqual('Very nice.');
+        expect(result.unpack(mappedOk)).toEqual('Very nice.');
 
         const mappedErr = result.mapErr(r => ({message: `Ugh... ${r.message}`}), err);
 
-        expect(mappedErr.isOk).toEqual(false);
-        expect(mappedErr.isOk || mappedErr.reason).toEqual({message: 'Ugh... Oops'});
+        expect(result.unpack(mappedErr)).toEqual({message: 'Ugh... Oops'});
     });
 });

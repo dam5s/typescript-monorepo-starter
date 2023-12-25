@@ -1,6 +1,6 @@
-import {AppState, stateStore} from '../../App/StateStore';
-import {http} from '../../Networking/Http';
-import {result} from 'prelude';
+import {AppState, stateStore} from '../../AppState';
+import {http} from '../../Networking';
+import {result} from '../../Prelude';
 import {jokeState} from '../JokeState';
 import {Store} from 'redux';
 

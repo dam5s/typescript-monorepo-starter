@@ -1,5 +1,5 @@
 import {Action, combineReducers, createStore, Reducer, Store} from 'redux';
-import {jokeState, JokeState} from '../Joke/JokeState';
+import {jokeState, JokeState} from '../Joke';
 
 export type AppState = {
     joke: JokeState

@@ -6,6 +6,7 @@ const stringToInt: schema.Decoder<number> =
         const maybeInt = parseInt(value);
 
         if (isNaN(maybeInt)) {
+            // eslint-disable-next-line functional/no-throw-statements
             throw new DecoderError('Failed to convert string to int');
         }
 

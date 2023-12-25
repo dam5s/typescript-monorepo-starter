@@ -6,6 +6,7 @@ const getEnv = (name: string): string | undefined =>
     window.env[name];
 
 const missingConfig = (name: string): string => {
+    // eslint-disable-next-line functional/no-throw-statements
     throw `missing env configuration: ${name}`;
 };
 

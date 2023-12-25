@@ -1,10 +1,8 @@
 import {ReactElement} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppState} from '../App/StateStore';
-import {jokeState} from './JokeState';
-import {jokesApi} from './JokesApi';
-import {appContext} from '../App/AppContext';
-import {useAsyncResult} from '../Prelude/UseAsyncResult';
+import {appContext, AppState} from '../AppState';
+import {jokesApi, jokeState} from '../Joke';
+import {useAsyncResult} from '../Prelude';
 
 export const Joke = (): ReactElement => {
     const dispatch = useDispatch();

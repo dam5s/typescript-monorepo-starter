@@ -1,4 +1,4 @@
-import {remoteData as r} from '../RemoteData';
+import {remoteData as r} from '..';
 
 describe('RemoteData', () => {
 

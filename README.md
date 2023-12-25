@@ -4,7 +4,7 @@ This is a monorepo using React/Redux/Typescript on the frontend and Hapi/Typescr
 
 ## Dev dependencies
 
- * [Node 16](https://nodejs.org/)
+ * [Node 20](https://nodejs.org/)
  * [Docker](https://www.docker.com/get-started)
  * [Pack](https://buildpacks.io/docs/tools/pack/)
 

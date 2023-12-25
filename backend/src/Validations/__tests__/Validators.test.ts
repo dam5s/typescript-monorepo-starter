@@ -1,7 +1,7 @@
 import {Validator, validators} from '../Validators';
 import {validationError} from '../ValidationError';
 import {validationResult} from '../ValidationResult';
-import {result} from 'prelude';
+import {result} from '../../Prelude';
 
 describe('Validators', () => {
 

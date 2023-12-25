@@ -1,4 +1,4 @@
-import {maybe} from '../Maybe';
+import {maybe} from '..';
 
 describe('Maybe', () => {
 

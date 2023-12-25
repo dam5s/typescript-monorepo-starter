@@ -1,7 +1,7 @@
-import {result} from 'prelude';
 import {ValidationError} from './ValidationError';
 import {ValidationResult} from './ValidationResult';
 import {ValidationInput} from './ValidationInput';
+import {result} from '../Prelude';
 
 export type Validator<Input extends ValidationInput, Output> =
     (value: Input) => ValidationResult<Input, Output>;
