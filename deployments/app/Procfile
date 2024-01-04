@@ -1,1 +1,1 @@
-web: chmod 755 start.sh && ./start.sh
+web: bash server.sh

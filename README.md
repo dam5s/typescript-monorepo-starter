@@ -25,5 +25,5 @@ npx jake deployments:app
 ## Running the built container
 
 ```
-docker run --tty --rm -it -e PORT=3000 -p 3000:3000 --name starter-app starter-app
+docker run -p 3000:3000 -e PORT=3000 -it --tty --rm --entrypoint web starter-app
 ```

@@ -46,7 +46,7 @@ task('app-container-only', async () => {
 
     await execOrExit('pack build starter-app ' +
         `--path ${appBuildDir} ` +
-        '--env BP_NODE_VERSION=16 ' +
+        '--env BP_NODE_VERSION=20 ' +
         '--env BP_NODE_RUN_SCRIPTS=installBackend ' +
         '--builder paketobuildpacks/builder:base ' +
         '--buildpack gcr.io/paketo-buildpacks/nginx ' +

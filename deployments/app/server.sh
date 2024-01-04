@@ -6,12 +6,11 @@ window.env = {
 };
 EOT
 
-mkfifo /tmp/logs
-
 echo "Starting node backend on port 3001"
-PORT=3001 node backend/index.js 2>&1 | tee /tmp/logs &
+PORT=3001 node backend/index.js &
 
 echo "Starting nginx on port $PORT"
-nginx -p /workspace -c /workspace/nginx.conf 2>&1 | tee /tmp/logs &
+mkdir /workspace/logs
+nginx -p /workspace -c /workspace/nginx.conf &
 
-tail -f /tmp/logs
+wait -n

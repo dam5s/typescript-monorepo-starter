@@ -1,4 +1,4 @@
-import {RemoteData} from '../Prelude/RemoteData';
+import {RemoteData} from '../Prelude';
 
 expect.extend({
     toBeNotLoaded: <T, E>(data: RemoteData<T, E>) => ({
