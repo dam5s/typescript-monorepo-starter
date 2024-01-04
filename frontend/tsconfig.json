@@ -17,5 +17,8 @@
         "noImplicitAny": true,
         "jsx": "react-jsx"
     },
-    "include": ["src", "../prelude/src"],
+    "include": [
+      "src",
+      "node_modules/vitest/globals.d.ts"
+    ]
 }

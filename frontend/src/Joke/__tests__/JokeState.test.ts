@@ -15,11 +15,11 @@ describe('Joke State', () => {
     const getJokeState = () => store.getState().joke;
 
     test('start loading joke', () => {
-        expect(getJokeState().data).toBeNotLoaded();
+        expect(getJokeState().data).toEqual(expect.objectContaining({type: 'not loaded'}));
 
         store.dispatch(jokeState.startLoading);
 
-        expect(getJokeState().data).toBeLoading();
+        expect(getJokeState().data).toEqual(expect.objectContaining({type: 'loading'}));
     });
 
     describe('finished loading joke', () => {
@@ -30,7 +30,7 @@ describe('Joke State', () => {
                 jokeState.finishedLoading(result.ok(joke))
             );
 
-            expect(getJokeState().data).toBeLoadedWith(joke);
+            expect(getJokeState().data).toEqual(expect.objectContaining({type: 'loaded', data: joke}));
         });
 
         test('on failure', () => {
@@ -38,7 +38,7 @@ describe('Joke State', () => {
                 jokeState.finishedLoading(result.err(http.connectionError))
             );
 
-            expect(getJokeState().data).toBeFailedWith(http.connectionError);
+            expect(getJokeState().data).toEqual(expect.objectContaining({type: 'failure', error: http.connectionError}));
         });
     });
 });

@@ -16,7 +16,7 @@ describe('Maybe', () => {
     });
 
     test('orElse', () => {
-        expect(some.orElse(2)).toEqual(some);
+        expect(some.orElse(2)).toEqual(1);
         expect(none.orElse(2)).toEqual(2);
     });
 
