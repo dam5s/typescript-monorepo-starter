@@ -1,23 +1,23 @@
-import {ReactElement, ReactNode} from 'react';
+import * as React from 'react';
+import * as ReactRedux from 'react-redux';
+import * as Redux from 'redux';
 import {appContext, AppContext, AppState, stateStore} from '../AppState';
-import {Provider} from 'react-redux';
-import {Store} from 'redux';
 import {MockWebServer} from './MockWebServer';
 
 type TestAppContextProps = {
-    store?: Store<AppState>,
+    store?: Redux.Store<AppState>,
     server?: MockWebServer,
-    children: ReactNode
+    children: React.ReactNode
 };
 
-export const TestAppContext = ({store, server, children}: TestAppContextProps): ReactElement => {
+export const TestAppContext = ({store, server, children}: TestAppContextProps): React.ReactElement => {
     const appEnv = server
         ? {...appContext.defaultEnv, baseApiUrl: server.baseUrl()}
         : appContext.defaultEnv;
 
     return <AppContext.Provider value={appEnv}>
-        <Provider store={store || stateStore.create()}>
+        <ReactRedux.Provider store={store || stateStore.create()}>
             {children}
-        </Provider>
+        </ReactRedux.Provider>
     </AppContext.Provider>;
 };

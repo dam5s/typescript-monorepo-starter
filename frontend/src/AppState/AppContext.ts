@@ -1,4 +1,4 @@
-import {createContext, useContext} from 'react';
+import * as React from 'react';
 import {env} from './Env';
 
 const defaultEnv = {
@@ -6,9 +6,9 @@ const defaultEnv = {
 };
 
 export const AppContext =
-    createContext(defaultEnv);
+    React.createContext(defaultEnv);
 
-const get = () => useContext(AppContext);
+const get = () => React.useContext(AppContext);
 
 export const appContext = {
     defaultEnv,

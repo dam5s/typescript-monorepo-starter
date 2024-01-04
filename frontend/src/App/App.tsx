@@ -1,12 +1,12 @@
-import {ReactElement} from 'react';
+import * as React from 'react';
+import * as ReactRedux from 'react-redux';
 import {appContext, AppContext, stateStore} from '../AppState';
-import {Provider} from 'react-redux';
 import {Joke} from './Joke';
 import './App.css';
 
-export const App = (): ReactElement =>
+export const App = (): React.ReactElement =>
     <AppContext.Provider value={appContext.defaultEnv}>
-        <Provider store={stateStore.create()}>
+        <ReactRedux.Provider store={stateStore.create()}>
             <Joke/>
-        </Provider>
+        </ReactRedux.Provider>
     </AppContext.Provider>;

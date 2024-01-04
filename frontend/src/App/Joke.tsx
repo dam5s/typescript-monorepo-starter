@@ -1,11 +1,11 @@
-import {ReactElement} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import * as React from 'react';
+import * as ReactRedux from 'react-redux';
 import {appContext, AppState} from '../AppState';
 import {jokesApi, jokeState} from '../Joke';
 import {useAsyncResult} from '../Prelude';
 
-export const Joke = (): ReactElement => {
-    const dispatch = useDispatch();
+export const Joke = (): React.ReactElement => {
+    const dispatch = ReactRedux.useDispatch();
     const env = appContext.get();
 
     useAsyncResult(() => {
@@ -16,7 +16,7 @@ export const Joke = (): ReactElement => {
             .onComplete(result => dispatch(jokeState.finishedLoading(result)));
     });
 
-    const jokeData = useSelector((state: AppState) => state.joke.data);
+    const jokeData = ReactRedux.useSelector((state: AppState) => state.joke.data);
 
     return jokeData.mapAll({
         whenNotLoaded: () => <article/>,
