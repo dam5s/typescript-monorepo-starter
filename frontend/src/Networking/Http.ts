@@ -1,5 +1,5 @@
 import {Decoder} from 'schemawax';
-import {asyncResult, AsyncResult, maybe} from '../Prelude';
+import {asyncResult, AsyncResult} from '../Prelude';
 import {match} from 'ts-pattern';
 
 export declare namespace Http {
@@ -41,11 +41,13 @@ const decodeJson = <T>(decoder: Decoder<T>) => (response: Response): Http.Result
     asyncResult
         .ofPromise(response.json())
         .mapErr(() => deserializationError(response))
-        .flatMapOk(object =>
-            maybe.of(decoder.decode(object) || undefined)
-                .map(json => asyncResult.ok<T, Http.Error>(json))
-                .orElse(asyncResult.err<T, Http.Error>(deserializationError(response)))
-        );
+        .flatMapOk((object) => {
+            const decoded = decoder.decode(object);
+
+            return decoded == null
+                ? asyncResult.err<T, Http.Error>(deserializationError(response))
+                : asyncResult.ok<T, Http.Error>(decoded);
+        });
 
 export const http = {
     connectionError,
