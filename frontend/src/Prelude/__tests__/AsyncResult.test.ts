@@ -1,9 +1,9 @@
-import {asyncResult, AsyncResult, Rejection, result} from '..';
+import {asyncResult, AsyncResult, result} from '..';
 
 describe('AsyncResult', () => {
 
-    let ok: AsyncResult<number, Rejection>;
-    let rejected: AsyncResult<string, Rejection>;
+    let ok: AsyncResult<number>;
+    let rejected: AsyncResult<string>;
 
     beforeEach(() => {
         ok = asyncResult.ofPromise(Promise.resolve(10));
@@ -38,7 +38,7 @@ describe('AsyncResult', () => {
     });
 
     test('onComplete', async () => {
-        let res = result.err<number, Rejection>({reason: 'Nope'});
+        let res = result.err<number, AsyncResult.Rejection>({reason: 'Nope'});
 
         const completed = await ok.onComplete(r => res = r).promise;
 

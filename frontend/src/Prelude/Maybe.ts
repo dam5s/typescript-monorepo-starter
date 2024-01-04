@@ -1,17 +1,21 @@
 import {Mapping} from './FunctionTypes';
 
-export type Some<T> = {
-    isSome: true
-    value: T
+export declare namespace Maybe {
+
+    type Some<T> = {
+        isSome: true
+        value: T
+    }
+
+    type None = {
+        isSome: false
+    }
 }
 
-export type None = {
-    isSome: false
-}
-
-export type Maybe<T> = (Some<T> | None) & {
+export type Maybe<T> = (Maybe.Some<T> | Maybe.None) & {
     map: <NewT>(mapping: Mapping<T, NewT>) => Maybe<NewT>
     orElse: (other: T) => T
+    orNull: () => T | null
 }
 
 const some = <T>(value: T): Maybe<T> => ({
@@ -19,12 +23,14 @@ const some = <T>(value: T): Maybe<T> => ({
     value,
     map: <NewT>(mapping: Mapping<T, NewT>) => some(mapping(value)),
     orElse: () => value,
+    orNull: () => value,
 });
 
 const none = <T>(): Maybe<T> => ({
     isSome: false,
     map: <NewT>() => none<NewT>(),
     orElse: (other: T) => other,
+    orNull: () => null,
 });
 
 const of = <T>(value: T | undefined): Maybe<T> =>

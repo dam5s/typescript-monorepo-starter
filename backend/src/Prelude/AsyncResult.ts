@@ -1,7 +1,17 @@
 import {Consumer, Mapping} from './FunctionTypes';
 import {result, Result} from './Result';
 
-export type AsyncResult<T, E> = {
+export declare namespace AsyncResult {
+    type Rejection = {
+        reason: unknown
+    }
+
+    type CancellationToken = {
+        isCancelled: boolean
+    }
+}
+
+export type AsyncResult<T, E = AsyncResult.Rejection> = {
     mapOk: <NewT>(mapping: Mapping<T, NewT>) => AsyncResult<NewT, E>
     mapErr: <NewE>(mapping: Mapping<E, NewE>) => AsyncResult<T, NewE>
     onComplete: (consumer: Consumer<Result<T, E>>) => AsyncResult<T, E>
@@ -11,19 +21,12 @@ export type AsyncResult<T, E> = {
     cancel: () => void
 }
 
-export type Rejection = {
-    reason: unknown
-}
-
-type CancellationToken = {
-    isCancelled: boolean
-}
 
 const createToken = () => ({
     isCancelled: false,
 });
 
-const newAsyncResult = <T, E>(promise: Promise<Result<T, E>>, token: CancellationToken): AsyncResult<T, E> => {
+const newAsyncResult = <T, E>(promise: Promise<Result<T, E>>, token: AsyncResult.CancellationToken): AsyncResult<T, E> => {
     type Chainer<NewT, NewE> =
         (result: Result<T, E>, resolve: Consumer<Result<NewT, NewE>>) => void
 
@@ -75,10 +78,10 @@ const newAsyncResult = <T, E>(promise: Promise<Result<T, E>>, token: Cancellatio
     };
 };
 
-const ofPromise = <T>(promise: Promise<T>): AsyncResult<T, Rejection> => {
+const ofPromise = <T>(promise: Promise<T>): AsyncResult<T> => {
     const token = createToken();
-    const safePromise: Promise<Result<T, Rejection>> = promise
-        .then(data => result.ok<T, Rejection>(data))
+    const safePromise: Promise<Result<T, AsyncResult.Rejection>> = promise
+        .then(data => result.ok<T, AsyncResult.Rejection>(data))
         .catch(reason => result.err({reason}));
 
     return newAsyncResult(safePromise, token);
