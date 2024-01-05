@@ -13,22 +13,22 @@ const projectTasks = (projectDir) => {
         await execOrExit('npm install');
     });
 
-    desc(`${projectName} - lint`)
+    desc(`${projectName} - run linter`)
     task('lint', ['install'], async () => {
         await execOrExit('npm run lint');
     });
 
-    desc(`${projectName} - test`)
+    desc(`${projectName} - run tests`)
     task('test', ['lint'], async () => {
         await execOrExit('npm run test');
     });
 
-    desc(`${projectName} - build`)
+    desc(`${projectName} - build javascript from typescript`)
     task('build', ['test'], async () => {
         await execOrExit('npm run build');
     });
 
-    desc(`${projectName} - start`)
+    desc(`${projectName} - start server`)
     task('start', ['fromProjectDir'], async () => {
         await execOrExit('npm run start');
     });

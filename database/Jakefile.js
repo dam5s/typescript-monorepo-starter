@@ -27,7 +27,7 @@ namespace('migrate', () => {
     task('dev', ['fromProjectDir'], () => execOrExit('npx db-migrate up -e dev'));
 });
 
-desc('database - migrate local databases')
+desc('database - migrate local (dev and tests) databases')
 task('migrate', ['install', 'migrate:tests', 'migrate:dev']);
 
 desc('database - create new migration')

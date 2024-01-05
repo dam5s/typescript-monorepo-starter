@@ -60,5 +60,5 @@ task('app-container-only', async () => {
     await execOrExit(`docker save starter-app:latest | gzip > app-container.tgz`)
 });
 
-desc('app - Create container')
+desc('deployments - create app container')
 task('app', ['frontend:build', 'backend:build', 'app-container-only']);
