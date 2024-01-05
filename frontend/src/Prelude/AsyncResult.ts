@@ -6,8 +6,8 @@ export declare namespace AsyncResult {
         reason: unknown
     }
 
-    type CancellationToken = {
-        isCancelled: boolean
+    type Options = {
+        onCancel?: () => void
     }
 }
 
@@ -21,18 +21,37 @@ export type AsyncResult<T, E = AsyncResult.Rejection> = {
     cancel: () => void
 }
 
-const createToken = () => ({
-    isCancelled: false,
-});
+class CancellationToken {
+    private _isCancelled: boolean;
+    private _onCancel: (() => void) | undefined;
 
-const newAsyncResult = <T, E>(promise: Promise<Result<T, E>>, token: AsyncResult.CancellationToken): AsyncResult<T, E> => {
+    constructor(options: AsyncResult.Options) {
+        this._isCancelled = false;
+        this._onCancel = options.onCancel;
+    }
+
+    isCancelled(): boolean {
+        return this._isCancelled;
+    }
+
+    cancel() {
+        if (this._isCancelled) {
+            return;
+        }
+
+        this._isCancelled = true;
+        this._onCancel?.();
+    }
+}
+
+const newAsyncResult = <T, E>(promise: Promise<Result<T, E>>, token: CancellationToken): AsyncResult<T, E> => {
     type Chainer<NewT, NewE> =
         (result: Result<T, E>, resolve: Consumer<Result<NewT, NewE>>) => void
 
     const transformWithCancellableChainer = <NewT, NewE>(chainer: Chainer<NewT, NewE>): AsyncResult<NewT, NewE> => {
         const newPromise = new Promise<Result<NewT, NewE>>(resolve => {
             promise.then(result => {
-                if (!token.isCancelled) {
+                if (!token.isCancelled()) {
                     chainer(result, resolve);
                 }
             });
@@ -71,14 +90,13 @@ const newAsyncResult = <T, E>(promise: Promise<Result<T, E>>, token: AsyncResult
                 }
             }),
         promise,
-        cancel: () => {
-            token.isCancelled = true;
-        },
+        cancel: () => token.cancel(),
     };
 };
 
-const ofPromise = <T>(promise: Promise<T>): AsyncResult<T> => {
-    const token = createToken();
+const ofPromise = <T>(promise: Promise<T>, options: AsyncResult.Options = {}): AsyncResult<T> => {
+    const token = new CancellationToken(options);
+
     const safePromise: Promise<Result<T, AsyncResult.Rejection>> = promise
         .then(data => result.ok<T, AsyncResult.Rejection>(data))
         .catch(reason => result.err({reason}));
@@ -86,16 +104,16 @@ const ofPromise = <T>(promise: Promise<T>): AsyncResult<T> => {
     return newAsyncResult(safePromise, token);
 };
 
-const ok = <T, E>(data: T): AsyncResult<T, E> => {
-    const token = createToken();
+const ok = <T, E>(data: T, options: AsyncResult.Options = {}): AsyncResult<T, E> => {
+    const token = new CancellationToken(options);
     const res = result.ok<T, E>(data);
     const promise = Promise.resolve(res);
 
     return newAsyncResult(promise, token);
 };
 
-const err = <T, E>(reason: E): AsyncResult<T, E> => {
-    const token = createToken();
+const err = <T, E>(reason: E, options: AsyncResult.Options = {}): AsyncResult<T, E> => {
+    const token = new CancellationToken(options);
     const res = result.err<T, E>(reason);
     const promise = Promise.resolve(res);
 

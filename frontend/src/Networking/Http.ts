@@ -24,13 +24,16 @@ const unexpectedStatusCode = (expected: number, response: Response): Http.Error 
 const deserializationError = (response: Response): Http.Error =>
     ({type: 'deserialization error', response});
 
-const requestInit = (request: Http.Request): RequestInit =>
-    ({method: request.method});
+const requestInit = (request: Http.Request, controller: AbortController): RequestInit =>
+    ({method: request.method, signal: controller.signal});
 
-const sendRequest = (request: Http.Request): Http.Result =>
-    asyncResult
-        .ofPromise(fetch(request.url, requestInit(request)))
+const sendRequest = (request: Http.Request): Http.Result => {
+    const controller = new AbortController();
+
+    return asyncResult
+        .ofPromise(fetch(request.url, requestInit(request, controller)), {onCancel: () => controller.abort()})
         .mapErr((): Http.Error => connectionError);
+};
 
 const expectStatusCode = (expected: number) => (response: Response): Http.Result =>
     match(response.status)
