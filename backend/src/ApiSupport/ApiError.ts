@@ -1,6 +1,6 @@
 export type ApiError = {
-    message: string
-    field?: string
+    readonly message: string
+    readonly field?: string
 }
 
 const create = (message: string, field?: string): ApiError =>

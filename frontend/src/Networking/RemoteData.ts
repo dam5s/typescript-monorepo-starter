@@ -3,11 +3,11 @@ import {Result} from '../Prelude';
 import {Http} from './Http';
 
 export type RemoteData<T> =
-    | { type: 'not loaded' }
-    | { type: 'loading' }
-    | { type: 'refreshing', data: T }
-    | { type: 'loaded', data: T }
-    | { type: 'failure', error: Http.Error }
+    | { readonly type: 'not loaded' }
+    | { readonly type: 'loading' }
+    | { readonly type: 'refreshing', readonly data: T }
+    | { readonly type: 'loaded', readonly data: T }
+    | { readonly type: 'failure', readonly error: Http.Error }
 
 const notLoaded = <T>(): RemoteData<T> =>
     ({type: 'not loaded'});
@@ -37,11 +37,11 @@ const ofResult = <T>(result: Result<T, Http.Error>): RemoteData<T> =>
     result.isOk ? loaded(result.data) : failure(result.reason);
 
 type RemoteDataMapper<T, Output> = {
-    whenNotLoaded: () => Output,
-    whenLoading: () => Output,
-    whenRefreshing: (data: T) => Output,
-    whenLoaded: (data: T) => Output,
-    whenFailed: (error: Http.Error) => Output
+    readonly whenNotLoaded: () => Output,
+    readonly whenLoading: () => Output,
+    readonly whenRefreshing: (data: T) => Output,
+    readonly whenLoaded: (data: T) => Output,
+    readonly whenFailed: (error: Http.Error) => Output
 }
 
 const mapAll = <T, Output>(data: RemoteData<T>, mapper: RemoteDataMapper<T, Output>): Output =>

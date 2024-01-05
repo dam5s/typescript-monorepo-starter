@@ -4,10 +4,10 @@ import {JokeFields, jokesRepo} from './JokesRepo';
 import {decoders, typedRoute} from '../ApiSupport';
 
 type SearchQuery =
-    { search?: string }
+    { readonly search?: string }
 
 type ShowPathParams =
-    { id: number }
+    { readonly id: number }
 
 
 const fieldsDecoder: schema.Decoder<JokeFields> =

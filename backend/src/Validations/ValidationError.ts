@@ -1,7 +1,7 @@
 import {ValidationInput} from './ValidationInput';
 
 export type ValidationError<Input extends ValidationInput> =
-    { field?: keyof Input, message: string }
+    { readonly field?: keyof Input, readonly message: string }
 
 const field = <Input extends ValidationInput>(field: keyof Input, message: string): ValidationError<Input> =>
     ({field, message});

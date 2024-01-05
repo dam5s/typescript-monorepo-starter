@@ -21,6 +21,7 @@
         "import/no-internal-modules": ["error"],
         "functional/no-promise-reject": ["error"],
         "functional/no-throw-statements": ["error"],
-        "functional/no-try-statements": ["error"]
+        "functional/no-try-statements": ["error"],
+        "functional/prefer-readonly-type": ["error"]
     }
 }

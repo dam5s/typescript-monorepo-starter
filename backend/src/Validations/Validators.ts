@@ -11,14 +11,14 @@ type ValidatorRecord<Input extends ValidationInput> =
     Record<string, Validator<Input, any>>
 
 type ObjectType<Input extends ValidationInput, V extends ValidatorRecord<Input>> =
-    V extends { [K in keyof infer U]: Validator<Input, (infer U)[K]> }
+    V extends { readonly [K in keyof infer U]: Validator<Input, (infer U)[K]> }
         ? U
         : never
 
 const object = <Input extends ValidationInput, V extends ValidatorRecord<Input>>(struct: V): Validator<Input, ObjectType<Input, V>> =>
     (value: Input) => {
         const objectResult: Partial<ObjectType<Input, V>> = {};
-        let errors: ValidationError<Input>[] = [];
+        let errors: readonly ValidationError<Input>[] = [];
 
         for (const key in struct) {
             const fieldValidator = struct[key];

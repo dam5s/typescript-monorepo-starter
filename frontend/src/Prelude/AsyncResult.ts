@@ -3,27 +3,28 @@ import {result, Result} from './Result';
 
 export declare namespace AsyncResult {
     type Rejection = {
-        reason: unknown
+        readonly reason: unknown
     }
 
     type Options = {
-        onCancel?: () => void
+        readonly onCancel?: () => void
     }
 }
 
 export type AsyncResult<T, E = AsyncResult.Rejection> = {
-    mapOk: <NewT>(mapping: Mapping<T, NewT>) => AsyncResult<NewT, E>
-    mapErr: <NewE>(mapping: Mapping<E, NewE>) => AsyncResult<T, NewE>
-    onComplete: (consumer: Consumer<Result<T, E>>) => AsyncResult<T, E>
-    flatMapOk: <NewT>(mapping: Mapping<T, AsyncResult<NewT, E>>) => AsyncResult<NewT, E>
-    flatMapErr: <NewE>(mapping: Mapping<E, AsyncResult<T, NewE>>) => AsyncResult<T, NewE>
-    promise: Promise<Result<T, E>>
-    cancel: () => void
+    readonly mapOk: <NewT>(mapping: Mapping<T, NewT>) => AsyncResult<NewT, E>
+    readonly mapErr: <NewE>(mapping: Mapping<E, NewE>) => AsyncResult<T, NewE>
+    readonly onComplete: (consumer: Consumer<Result<T, E>>) => AsyncResult<T, E>
+    readonly flatMapOk: <NewT>(mapping: Mapping<T, AsyncResult<NewT, E>>) => AsyncResult<NewT, E>
+    readonly flatMapErr: <NewE>(mapping: Mapping<E, AsyncResult<T, NewE>>) => AsyncResult<T, NewE>
+    readonly promise: Promise<Result<T, E>>
+    readonly cancel: () => void
 }
 
 class CancellationToken {
+    // eslint-disable-next-line functional/prefer-readonly-type
     private _isCancelled: boolean;
-    private _onCancel: (() => void) | undefined;
+    private readonly _onCancel: (() => void) | undefined;
 
     constructor(options: AsyncResult.Options) {
         this._isCancelled = false;

@@ -2,7 +2,7 @@ import * as Redux from 'redux';
 import {jokeState, JokeState} from '../Joke';
 
 export type AppState = {
-    joke: JokeState
+    readonly joke: JokeState
 };
 
 const appReducer: Redux.Reducer<AppState, Redux.Action> =

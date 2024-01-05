@@ -66,8 +66,8 @@ describe('Http module', () => {
     describe('decodeJson', () => {
 
         type JsonType = {
-            id: number,
-            name: string,
+            readonly id: number,
+            readonly name: string,
         }
 
         const decoder: Json.Decoder<JsonType> = Json.object({

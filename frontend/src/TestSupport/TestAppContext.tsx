@@ -5,9 +5,9 @@ import {appContext, AppContext, AppState, stateStore} from '../AppState';
 import {MockWebServer} from './MockWebServer';
 
 type TestAppContextProps = {
-    store?: Redux.Store<AppState>,
-    server?: MockWebServer,
-    children: React.ReactNode
+    readonly store?: Redux.Store<AppState>,
+    readonly server?: MockWebServer,
+    readonly children: React.ReactNode
 };
 
 export const TestAppContext = ({store, server, children}: TestAppContextProps): React.ReactElement => {

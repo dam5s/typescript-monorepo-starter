@@ -2,7 +2,7 @@ import {result} from '..';
 
 describe('Result', () => {
 
-    type Message = { message: string }
+    type Message = { readonly message: string }
     const ok = result.ok<string, Message>('Very nice.');
     const err = result.err<string, Message>({message: 'Oops'});
 

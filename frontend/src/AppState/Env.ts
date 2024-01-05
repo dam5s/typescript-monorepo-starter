@@ -1,5 +1,5 @@
 declare global {
-    interface Window { env: Record<string, string> }
+    interface Window { readonly env: Record<string, string> }
 }
 
 const getEnv = (name: string): string | undefined =>

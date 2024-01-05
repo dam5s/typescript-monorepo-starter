@@ -8,14 +8,15 @@ export type JokeRecord =
     JokeFields & { readonly id: number }
 
 export type JokesRepo = {
-    random: () => Promise<JokeRecord>
-    add: (fields: JokeFields) => Promise<JokeRecord>
-    find: (id: number) => Promise<JokeRecord|undefined>
-    findAll: () => Promise<JokeRecord[]>
-    search: (query: string) => Promise<JokeRecord[]>
+    readonly random: () => Promise<JokeRecord>
+    readonly add: (fields: JokeFields) => Promise<JokeRecord>
+    readonly find: (id: number) => Promise<JokeRecord|undefined>
+    readonly findAll: () => Promise<readonly JokeRecord[]>
+    readonly search: (query: string) => Promise<readonly JokeRecord[]>
 }
 
-const create = (initialJokes: JokeRecord[] = jokesData): JokesRepo => {
+const create = (initialJokes: readonly JokeRecord[] = jokesData): JokesRepo => {
+    // eslint-disable-next-line functional/prefer-readonly-type
     const jokes: JokeRecord[] = initialJokes.slice();
 
     return {

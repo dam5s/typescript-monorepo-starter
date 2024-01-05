@@ -7,14 +7,14 @@ describe('Validators', () => {
 
     describe('object', () => {
         type UserForm = {
-            username: string
-            password: string
-            passwordConfirmation: string
+            readonly username: string
+            readonly password: string
+            readonly passwordConfirmation: string
         }
 
         type UserFields = {
-            username: string
-            passwordHash: string
+            readonly username: string
+            readonly passwordHash: string
         }
 
         const validateUsername: Validator<UserForm, string> = (form) =>

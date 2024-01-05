@@ -2,13 +2,13 @@ import {Mapping} from './FunctionTypes';
 
 export declare namespace Result {
     type Ok<T> = {
-        isOk: true
-        data: T
+        readonly isOk: true
+        readonly data: T
     }
 
     type Err<E> = {
-        isOk: false
-        reason: E
+        readonly isOk: false
+        readonly reason: E
     }
 }
 

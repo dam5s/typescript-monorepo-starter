@@ -5,20 +5,20 @@ import {apiError} from './ApiError';
 export declare namespace TypedRoute {
 
     type Decoders<Body, Query, Path> = {
-        body: schema.Decoder<Body>
-        query: schema.Decoder<Query>
-        path: schema.Decoder<Path>
+        readonly body: schema.Decoder<Body>
+        readonly query: schema.Decoder<Query>
+        readonly path: schema.Decoder<Path>
     }
 
     type Params<Body, Query, Path> = {
-        body: Body
-        query: Query
-        path: Path
+        readonly body: Body
+        readonly query: Query
+        readonly path: Path
     }
 
     type HapiObjects = {
-        request: Request
-        h: ResponseToolkit
+        readonly request: Readonly<Request>
+        readonly h : Readonly<ResponseToolkit>
     }
 
     type Handler<Body, Query, Path> =
@@ -27,8 +27,8 @@ export declare namespace TypedRoute {
     type Method = 'POST' | 'GET' | 'DELETE' | 'PUT' | 'PATCH'
 
     type RouteOptions<Body, Query, Path> = {
-        decoders: Decoders<Body, Query, Path>
-        handler: Handler<Body, Query, Path>
+        readonly decoders: Decoders<Body, Query, Path>
+        readonly handler: Handler<Body, Query, Path>
     }
 }
 

@@ -6,11 +6,11 @@ import {Http, RemoteData, remoteData} from '../Networking';
 /* State */
 
 export type Joke = {
-    content: string
+    readonly content: string
 };
 
 export type JokeState = {
-    data: RemoteData<Joke>
+    readonly data: RemoteData<Joke>
 };
 
 const initialState: JokeState = {
@@ -20,8 +20,8 @@ const initialState: JokeState = {
 /* Actions */
 
 type JokeAction =
-    | { type: 'joke/start loading joke' }
-    | { type: 'joke/finished loading joke', value: Result<Joke, Http.Error> }
+    | { readonly type: 'joke/start loading joke' }
+    | { readonly type: 'joke/finished loading joke', readonly value: Result<Joke, Http.Error> }
 
 const isJokeAction = (variable: unknown): variable is JokeAction =>
     (variable as JokeAction).type.startsWith('joke/');

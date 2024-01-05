@@ -3,17 +3,18 @@ import net from 'net';
 import {createHttpTerminator} from 'http-terminator';
 
 export type MockWebServer = {
-    stop: () => Promise<void>;
-    url: (path: string) => string,
-    baseUrl: () => string,
-    stub: (newCode: number, newResponse: Record<string, unknown>) => void;
-    lastRequest: () => RecordedRequest | undefined;
-    asyncLastRequest: () => Promise<RecordedRequest>;
+    readonly stop: () => Promise<void>;
+    readonly url: (path: string) => string,
+    readonly baseUrl: () => string,
+    readonly stub: (newCode: number, newResponse: Record<string, unknown>) => void;
+    readonly lastRequest: () => RecordedRequest | undefined;
+    readonly asyncLastRequest: () => Promise<RecordedRequest>;
 }
 
 export type RecordedRequest = {
-    method: string | undefined,
-    path: string | undefined,
+    readonly method: string | undefined,
+    readonly path: string | undefined,
+    // eslint-disable-next-line functional/prefer-readonly-type
     body: string,
 }
 

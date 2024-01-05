@@ -1,9 +1,9 @@
 type JokeData = {
-    id: number
-    joke: string
+    readonly id: number
+    readonly joke: string
 }
 
-export const jokesData: JokeData[] = [
+export const jokesData: readonly JokeData[] = [
     {
         'id': 1,
         'joke': 'Chuck Norris uses ribbed condoms inside out, so he gets the pleasure.',

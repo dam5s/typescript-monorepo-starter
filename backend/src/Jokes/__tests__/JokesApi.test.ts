@@ -7,7 +7,7 @@ describe('JokesApi', () => {
     let server: Server;
     let repo: JokesRepo;
 
-    const initialJokes: JokeRecord[] = [
+    const initialJokes: readonly JokeRecord[] = [
         {id: 1, joke: 'Joke #1'},
     ];
 

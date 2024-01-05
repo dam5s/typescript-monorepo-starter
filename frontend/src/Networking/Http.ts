@@ -5,12 +5,12 @@ import {match} from 'ts-pattern';
 export declare namespace Http {
 
     type Error =
-        | { type: 'connection error' }
-        | { type: 'unexpected status code', expected: number, response: Response }
-        | { type: 'deserialization error', response: Response }
+        | { readonly type: 'connection error' }
+        | { readonly type: 'unexpected status code', readonly expected: number, readonly response: Response }
+        | { readonly type: 'deserialization error', readonly response: Response }
 
     type Request =
-        | { method: 'GET', url: string }
+        | { readonly method: 'GET', readonly url: string }
 
     type Result<T = Response> = AsyncResult<T, Error>
 }
