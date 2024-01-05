@@ -3,6 +3,7 @@ import * as ReactRedux from 'react-redux';
 import {appContext, AppState} from '../AppState';
 import {jokesApi, jokeState} from '../Joke';
 import {useAsyncResult} from '../Prelude';
+import {remoteData} from '../Networking';
 
 export const Joke = (): React.ReactElement => {
     const dispatch = ReactRedux.useDispatch();
@@ -18,7 +19,7 @@ export const Joke = (): React.ReactElement => {
 
     const jokeData = ReactRedux.useSelector((state: AppState) => state.joke.data);
 
-    return jokeData.mapAll({
+    return remoteData.mapAll(jokeData, {
         whenNotLoaded: () => <article/>,
         whenLoading: () => <article>Loading...</article>,
         whenRefreshing: (joke) => <article>{joke.content}</article>,

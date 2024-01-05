@@ -1,7 +1,7 @@
 import {Action, Reducer} from 'redux';
 import {match} from 'ts-pattern';
-import {remoteData, RemoteData, Result} from '../Prelude';
-import {Http} from '../Networking';
+import {Result} from '../Prelude';
+import {Http, RemoteData, remoteData} from '../Networking';
 
 /* State */
 
@@ -10,7 +10,7 @@ export type Joke = {
 };
 
 export type JokeState = {
-    data: RemoteData<Joke, Http.Error>
+    data: RemoteData<Joke>
 };
 
 const initialState: JokeState = {
