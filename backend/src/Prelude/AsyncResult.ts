@@ -21,7 +21,6 @@ export type AsyncResult<T, E = AsyncResult.Rejection> = {
     cancel: () => void
 }
 
-
 const createToken = () => ({
     isCancelled: false,
 });

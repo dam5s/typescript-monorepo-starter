@@ -13,28 +13,28 @@ describe('AsyncResult', () => {
 
     test('ok', async () => {
         const resolved = await asyncResult.ok(1).promise;
-        expect(result.unpack(resolved)).toEqual(1);
+        expect(resolved).toEqual(result.ok(1));
     });
 
     test('err', async () => {
         const resolved = await asyncResult.err('Oops').promise;
-        expect(result.unpack(resolved)).toEqual('Oops');
+        expect(resolved).toEqual(result.err('Oops'));
     });
 
     test('mapOk', async () => {
         const mappedOk = await ok.mapOk(n => n + 2).promise;
-        expect(result.unpack(mappedOk)).toEqual(12);
+        expect(mappedOk).toEqual(result.ok(12));
 
         const mappedErr = await rejected.mapOk(n => n + 2).promise;
-        expect(result.unpack(mappedErr)).toEqual({reason: 'Denied.'});
+        expect(mappedErr).toEqual(result.err({reason: 'Denied.'}));
     });
 
     test('mapErr', async () => {
         const mappedOk = await ok.mapErr(r => `Reason: ${r.reason}`).promise;
-        expect(result.unpack(mappedOk)).toEqual(10);
+        expect(mappedOk).toEqual(result.ok(10));
 
         const mappedErr = await rejected.mapErr(r => `Reason: ${r.reason}`).promise;
-        expect(result.unpack(mappedErr)).toEqual('Reason: Denied.');
+        expect(mappedErr).toEqual(result.err('Reason: Denied.'));
     });
 
     test('onComplete', async () => {
@@ -42,25 +42,24 @@ describe('AsyncResult', () => {
 
         const completed = await ok.onComplete(r => res = r).promise;
 
-        expect(result.unpack(res)).toEqual(10);
-
-        expect(result.unpack(completed)).toEqual(10);
+        expect(res).toEqual(result.ok(10));
+        expect(completed).toEqual(result.ok(10));
     });
 
     test('flatMapOk', async () => {
         const flatMappedOk = await ok.flatMapOk(n => asyncResult.err({reason: `Failed to convert ${n}`})).promise;
-        expect(result.unpack(flatMappedOk)).toEqual({reason: 'Failed to convert 10'});
+        expect(flatMappedOk).toEqual(result.err({reason: 'Failed to convert 10'}));
 
         const flatMappedErr = await rejected.flatMapOk(() => asyncResult.ok(2)).promise;
-        expect(result.unpack(flatMappedErr)).toEqual({reason: 'Denied.'});
+        expect(flatMappedErr).toEqual(result.err({reason: 'Denied.'}));
     });
 
     test('flatMapErr', async () => {
         const flatMappedOk = await ok.flatMapErr(reason => asyncResult.err({reason: `Wrapped reason ${reason}`})).promise;
-        expect(result.unpack(flatMappedOk)).toEqual(10);
+        expect(flatMappedOk).toEqual(result.ok(10));
 
         const flatMappedErr = await rejected.flatMapErr(() => asyncResult.ok('Nice')).promise;
-        expect(result.unpack(flatMappedErr)).toEqual('Nice');
+        expect(flatMappedErr).toEqual(result.ok('Nice'));
     });
 
     describe('cancellation', () => {
@@ -81,7 +80,7 @@ describe('AsyncResult', () => {
             await new Promise(process.nextTick);
             const mappedValue = await mapped.promise;
 
-            expect(result.unpack(mappedValue)).toEqual(11);
+            expect(mappedValue).toEqual(result.ok(11));
             expect(callbackHappened).toEqual(false);
         });
 
@@ -101,7 +100,7 @@ describe('AsyncResult', () => {
             await new Promise(process.nextTick);
             const mappedRejected = await mapped.promise;
 
-            expect(result.unpack(mappedRejected)).toEqual('mapped rejection');
+            expect(mappedRejected).toEqual(result.err('mapped rejection'));
             expect(callbackHappened).toEqual(false);
         });
     });

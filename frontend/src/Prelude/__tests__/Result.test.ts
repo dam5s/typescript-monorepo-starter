@@ -9,20 +9,20 @@ describe('Result', () => {
     test('mapOk', () => {
         const mappedOk = result.mapOk(m => `Ok! ${m}`, ok);
 
-        expect(result.unpack(mappedOk)).toEqual('Ok! Very nice.');
+        expect(mappedOk).toEqual(result.ok('Ok! Very nice.'));
 
         const mappedErr = result.mapOk(m => `Ok! ${m}`, err);
 
-        expect(result.unpack(mappedErr)).toEqual({message: 'Oops'});
+        expect(mappedErr).toEqual(result.err({message: 'Oops'}));
     });
 
     test('mapErr', () => {
         const mappedOk = result.mapErr(r => ({message: `Ugh... ${r.message}`}), ok);
 
-        expect(result.unpack(mappedOk)).toEqual('Very nice.');
+        expect(mappedOk).toEqual(result.ok('Very nice.'));
 
         const mappedErr = result.mapErr(r => ({message: `Ugh... ${r.message}`}), err);
 
-        expect(result.unpack(mappedErr)).toEqual({message: 'Ugh... Oops'});
+        expect(mappedErr).toEqual(result.err({message: 'Ugh... Oops'}));
     });
 });
