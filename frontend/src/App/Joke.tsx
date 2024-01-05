@@ -1,23 +1,22 @@
 import * as React from 'react';
-import * as ReactRedux from 'react-redux';
-import {appContext, AppState} from '../AppState';
+import {appContext, stateStore} from '../AppState';
 import {jokesApi, jokeState} from '../Joke';
 import {useAsyncResult} from '../Prelude';
 import {remoteData} from '../Networking';
 
 export const Joke = (): React.ReactElement => {
-    const dispatch = ReactRedux.useDispatch();
+    const dispatch = stateStore.useDispatch();
     const env = appContext.get();
 
     useAsyncResult(() => {
-        dispatch(jokeState.startLoading);
+        dispatch(jokeState.actions.startLoading());
 
         return jokesApi
             .fetchRandom(env.baseApiUrl)
-            .onComplete(result => dispatch(jokeState.finishedLoading(result)));
+            .onComplete(result => dispatch(jokeState.actions.finishLoading(result)));
     });
 
-    const jokeData = ReactRedux.useSelector((state: AppState) => state.joke.data);
+    const jokeData = stateStore.useSelector(state => state.joke.data);
 
     return remoteData.mapAll(jokeData, {
         whenNotLoaded: () => <article/>,

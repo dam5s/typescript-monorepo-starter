@@ -1,12 +1,11 @@
-import {AppState, stateStore} from '../../AppState';
-import {http} from '../../Networking';
+import {AppStateStore, stateStore} from '../../AppState';
+import {http, remoteData} from '../../Networking';
 import {result} from '../../Prelude';
 import {jokeState} from '../JokeState';
-import {Store} from 'redux';
 
 describe('Joke State', () => {
 
-    let store: Store<AppState>;
+    let store: AppStateStore;
 
     beforeEach(() => {
         store = stateStore.create();
@@ -15,11 +14,11 @@ describe('Joke State', () => {
     const getJokeState = () => store.getState().joke;
 
     test('start loading joke', () => {
-        expect(getJokeState().data).toEqual(expect.objectContaining({type: 'not loaded'}));
+        expect(getJokeState().data).toEqual(remoteData.notLoaded());
 
-        store.dispatch(jokeState.startLoading);
+        store.dispatch(jokeState.actions.startLoading());
 
-        expect(getJokeState().data).toEqual(expect.objectContaining({type: 'loading'}));
+        expect(getJokeState().data).toEqual(remoteData.loading());
     });
 
     describe('finished loading joke', () => {
@@ -27,18 +26,18 @@ describe('Joke State', () => {
             const joke = {content: 'This is the joke'};
 
             store.dispatch(
-                jokeState.finishedLoading(result.ok(joke))
+                jokeState.actions.finishLoading(result.ok(joke))
             );
 
-            expect(getJokeState().data).toEqual(expect.objectContaining({type: 'loaded', data: joke}));
+            expect(getJokeState().data).toEqual(remoteData.loaded(joke));
         });
 
         test('on failure', () => {
             store.dispatch(
-                jokeState.finishedLoading(result.err(http.connectionError))
+                jokeState.actions.finishLoading(result.err(http.connectionError))
             );
 
-            expect(getJokeState().data).toEqual(expect.objectContaining({type: 'failure', error: http.connectionError}));
+            expect(getJokeState().data).toEqual(remoteData.failure(http.connectionError));
         });
     });
 });
