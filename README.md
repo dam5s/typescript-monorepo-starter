@@ -9,10 +9,16 @@ This is a monorepo using React/Redux/Typescript on the frontend and Hapi/Typescr
  * [Pack](https://buildpacks.io/docs/tools/pack/)
  * [PostgreSQL 14](https://www.postgresql.org)
 
-## Database setup
+## Jake setup
 
 ```
 npm install
+npx jake --tasks
+```
+
+## Database setup
+
+```
 npx jake db:create db:migrate
 ```
 
@@ -25,14 +31,12 @@ npx jake "db:new-migration[name-of-migration]"
 ## Running the build
 
 ```
-npm install
 npx jake
 ```
 
 ## Building the container
 
 ```
-npm install
 npx jake deployments:app
 ```
 
