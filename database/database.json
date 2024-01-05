@@ -1,0 +1,4 @@
+{
+    "dev": "postgres://ts_monorepo_db_user:secret@localhost/ts_monorepo_db_dev",
+    "tests": "postgres://ts_monorepo_db_user:secret@localhost/ts_monorepo_db_tests"
+}

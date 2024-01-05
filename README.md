@@ -7,6 +7,20 @@ This is a monorepo using React/Redux/Typescript on the frontend and Hapi/Typescr
  * [Node 20](https://nodejs.org/)
  * [Docker](https://www.docker.com/get-started)
  * [Pack](https://buildpacks.io/docs/tools/pack/)
+ * [PostgreSQL 14](https://www.postgresql.org)
+
+## Database setup
+
+```
+npm install
+npx jake db:create db:migrate
+```
+
+### Creating a new migration
+
+```
+npx jake "db:new-migration[name-of-migration]"
+```
 
 ## Running the build
 

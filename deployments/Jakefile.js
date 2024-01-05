@@ -1,7 +1,7 @@
 const {desc, task} = require('jake');
 const {execOrExit} = require('../build-support/ExecOrExit');
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 const projectDir = __dirname;
 const rootDir = path.dirname(__dirname);
