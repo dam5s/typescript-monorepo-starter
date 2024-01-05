@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactRedux from 'react-redux';
 import * as Redux from 'redux';
-import {appContext, AppContext, AppState, stateStore} from '../AppState';
+import {appContext, AppContext, AppState, appState} from '../AppState';
 import {MockWebServer} from './MockWebServer';
 
 type TestAppContextProps = {
@@ -16,7 +16,7 @@ export const TestAppContext = ({store, server, children}: TestAppContextProps): 
         : appContext.defaultEnv;
 
     return <AppContext.Provider value={appEnv}>
-        <ReactRedux.Provider store={store || stateStore.create()}>
+        <ReactRedux.Provider store={store || appState.createStore()}>
             {children}
         </ReactRedux.Provider>
     </AppContext.Provider>;

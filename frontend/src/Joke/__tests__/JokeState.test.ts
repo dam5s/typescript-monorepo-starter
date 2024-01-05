@@ -1,14 +1,14 @@
-import {AppStateStore, stateStore} from '../../AppState';
+import {AppState, appState} from '../../AppState';
 import {http, remoteData} from '../../Networking';
 import {result} from '../../Prelude';
 import {jokeState} from '../JokeState';
 
 describe('Joke State', () => {
 
-    let store: AppStateStore;
+    let store: AppState.Store;
 
     beforeEach(() => {
-        store = stateStore.create();
+        store = appState.createStore();
     });
 
     const getJokeState = () => store.getState().joke;

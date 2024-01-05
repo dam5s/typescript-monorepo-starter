@@ -2,22 +2,25 @@ import * as ReduxToolkit from '@reduxjs/toolkit';
 import * as ReactRedux from 'react-redux';
 import {jokeState} from '../Joke';
 
-const create = () =>
+const createStore = () =>
     ReduxToolkit.configureStore({
         reducer: {
             joke: jokeState.reducer,
         },
     });
 
-export type AppStateStore = ReturnType<typeof create>
-export type AppState = ReturnType<AppStateStore['getState']>
-export type AppDispatch = AppStateStore['dispatch']
+export declare namespace AppState {
+    type Store = ReturnType<typeof createStore>
+    type Dispatch = Store['dispatch']
+}
 
-const useDispatch = (): AppDispatch => ReactRedux.useDispatch();
+export type AppState = ReturnType<AppState.Store['getState']>
+
+const useDispatch = (): AppState.Dispatch => ReactRedux.useDispatch();
 const useSelector = <T>(selector: (state: AppState) => T) => ReactRedux.useSelector<AppState, T>(selector);
 
-export const stateStore = {
-    create,
+export const appState = {
+    createStore,
     useDispatch,
     useSelector,
 };
