@@ -1,6 +1,11 @@
 const {exec} = require('child_process');
 
-const execOrExit = cmd => {
+/**
+ * Runs command, exits process if subprocess fails
+ * @param {string} cmd Command to run
+ * @returns {Promise<void>}
+ */
+const run = cmd => {
     console.log('Executing command:', cmd);
 
     let resolve = () => {};
@@ -25,5 +30,7 @@ const execOrExit = cmd => {
 };
 
 module.exports = {
-    execOrExit,
+    run,
+    npm: cmd => run(`npm ${cmd}`),
+    npx: cmd => run(`npx ${cmd}`),
 };

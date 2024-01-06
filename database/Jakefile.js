@@ -1,5 +1,5 @@
 const {fail, task, namespace, desc} = require('jake');
-const {execOrExit} = require('../build-support/ExecOrExit');
+const {run, npm, npx} = require('../build-support/Run');
 const path = require('path');
 
 const projectDir = __dirname;
@@ -14,17 +14,17 @@ const srcFile = (name) => path.join(srcDir, name)
 task('fromProjectDir', () => process.chdir(projectDir));
 
 desc('database - install dependencies')
-task('install', ['fromProjectDir'], () => execOrExit('npm install'));
+task('install', ['fromProjectDir'], () => npm('install'));
 
 desc('database - create local databases')
-task('create', () => execOrExit(`psql postgres -f ${srcFile('create_local_databases.sql')}`));
+task('create', () => run(`psql postgres -f ${srcFile('create_local_databases.sql')}`));
 
 namespace('migrate', () => {
     desc('database - migrate tests database')
-    task('tests', ['fromProjectDir'], () => execOrExit('npx db-migrate up -e tests'));
+    task('tests', ['fromProjectDir'], () => npx('db-migrate up -e tests'));
 
     desc('database - migrate dev database')
-    task('dev', ['fromProjectDir'], () => execOrExit('npx db-migrate up -e dev'));
+    task('dev', ['fromProjectDir'], () => npx('db-migrate up -e dev'));
 });
 
 desc('database - migrate local (dev and tests) databases')
@@ -36,5 +36,5 @@ task('new-migration', ['fromProjectDir'], async (name) => {
         fail('Expected name of migration passed as argument');
     }
 
-    await execOrExit(`npx db-migrate create ${name}`);
+    await npx(`db-migrate create ${name}`);
 });

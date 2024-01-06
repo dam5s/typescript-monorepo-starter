@@ -1,5 +1,5 @@
 const {task, desc} = require('jake');
-const {execOrExit} = require('./ExecOrExit');
+const {npm} = require('./Run');
 const path = require("path");
 
 const projectTasks = (projectDir) => {
@@ -10,27 +10,27 @@ const projectTasks = (projectDir) => {
 
     desc(`${projectName} - install dependencies`)
     task('install', ['fromProjectDir'], async () => {
-        await execOrExit('npm install');
+        await npm('install');
     });
 
     desc(`${projectName} - run linter`)
     task('lint', ['install'], async () => {
-        await execOrExit('npm run lint');
+        await npm('run lint');
     });
 
     desc(`${projectName} - run tests`)
     task('test', ['lint'], async () => {
-        await execOrExit('npm run test');
+        await npm('run test');
     });
 
     desc(`${projectName} - build javascript from typescript`)
     task('build', ['test'], async () => {
-        await execOrExit('npm run build');
+        await npm('run build');
     });
 
     desc(`${projectName} - start server`)
     task('start', ['fromProjectDir'], async () => {
-        await execOrExit('npm run start');
+        await npm('run start');
     });
 };
 

@@ -1,5 +1,5 @@
 const {desc, task} = require('jake');
-const {execOrExit} = require('../build-support/ExecOrExit');
+const {run} = require('../build-support/Run');
 const fs = require('fs');
 const path = require('path');
 
@@ -44,7 +44,7 @@ task('app-container-only', async () => {
     fs.cpSync(path.join(backendProjectDir, 'package.json'), path.join(appBuildDir, 'backend', 'package.json'))
     fs.cpSync(path.join(backendProjectDir, 'package-lock.json'), path.join(appBuildDir, 'backend', 'package-lock.json'))
 
-    await execOrExit('pack build starter-app ' +
+    await run('pack build starter-app ' +
         `--path ${appBuildDir} ` +
         '--env BP_NODE_VERSION=20 ' +
         '--env BP_NODE_RUN_SCRIPTS=installBackend ' +
@@ -56,8 +56,8 @@ task('app-container-only', async () => {
 
     process.chdir(buildDir)
 
-    await execOrExit('tar czf app.tgz app')
-    await execOrExit(`docker save starter-app:latest | gzip > app-container.tgz`)
+    await run('tar czf app.tgz app')
+    await run(`docker save starter-app:latest | gzip > app-container.tgz`)
 });
 
 desc('deployments - create app container')
