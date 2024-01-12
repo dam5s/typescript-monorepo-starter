@@ -9,7 +9,8 @@ export declare namespace TestDatabase {
 
 const gateway = (): TestDatabase.Gateway => {
     const workerId = process.env['JEST_WORKER_ID'];
-    const url = `postgres://ts_monorepo_db_user:secret@localhost/ts_monorepo_db_tests_${workerId}`;
+    const dbHost = process.env['DB_HOST'] || 'localhost';
+    const url = `postgres://ts_monorepo_db_user:secret@${dbHost}/ts_monorepo_db_tests_${workerId}`;
     const db = databaseGateway.create(url);
 
     return {

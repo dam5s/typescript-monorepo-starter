@@ -20,22 +20,22 @@ const showPathParamsDecoder: schema.Decoder<ShowPathParams> =
     schema.object({required: {id: decoders.stringToInt}});
 
 
-const randomRoute = (deps: Dependencies): ServerRoute =>
+const random = (deps: Dependencies): ServerRoute =>
     typedRoute.get('/api/jokes/random', {
         decoders: typedRoute.decoders,
         handler: async (_, {h}) => h.response({data: await deps.jokes.random()}),
     });
 
-const addRoute = (deps: Dependencies): ServerRoute =>
+const create = (deps: Dependencies): ServerRoute =>
     typedRoute.post<JokesRepo.Fields>('/api/jokes', {
         decoders: {...typedRoute.decoders, body: fieldsDecoder},
         handler: async ({body}, {h}) => {
-            const data = await deps.jokes.add(body);
+            const data = await deps.jokes.create(body);
             return h.response({data}).code(201);
         },
     });
 
-const listRoute = (deps: Dependencies): ServerRoute =>
+const list = (deps: Dependencies): ServerRoute =>
     typedRoute.get<SearchQuery>('/api/jokes', {
         decoders: {...typedRoute.decoders, query: searchQueryDecoder},
         handler: async ({query}, {h}) => {
@@ -46,7 +46,7 @@ const listRoute = (deps: Dependencies): ServerRoute =>
         },
     });
 
-const showRoute = (deps: Dependencies): ServerRoute =>
+const show = (deps: Dependencies): ServerRoute =>
     typedRoute.get<unknown, ShowPathParams>('/api/jokes/{id}', {
         decoders: {...typedRoute.decoders, path: showPathParamsDecoder},
         handler: async ({path}, {h}) => {
@@ -64,9 +64,9 @@ type Dependencies = {
 
 export const jokesApi = {
     routes: (deps: Dependencies) => [
-        randomRoute(deps),
-        addRoute(deps),
-        listRoute(deps),
-        showRoute(deps),
+        random(deps),
+        create(deps),
+        list(deps),
+        show(deps),
     ],
 };

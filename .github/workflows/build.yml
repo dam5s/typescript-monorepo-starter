@@ -3,37 +3,79 @@ name: Build app
 on: push
 
 jobs:
-  build:
+  test-and-build-app:
     runs-on: ubuntu-latest
+    container: node:20
+
+    services:
+      postgres:
+        image: postgres:14
+        env: { POSTGRES_PASSWORD: postgres }
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-      - name: Check out code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+      - name: 'Check out code'
+        uses: actions/checkout@v4
 
-      - name: Install Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20'
+      - name: 'Install top-level dependencies'
+        run: |
+          npm install
 
-      - name: Install Pack (https://buildpacks.io/)
+      - name: 'Migrate database'
+        env:
+          PGPASSWORD: postgres
+          DB_HOST: postgres
+        run: |
+          npx jake db:create
+          npx jake db:migrate
+
+      - name: 'Run build'
+        env:
+          DB_HOST: postgres
+        run: |
+          npx jake build
+          npx jake deployments:app-artifact
+
+      - name: 'Save app artifact'
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: deployments/build/app.tgz
+
+  build-app-container:
+    runs-on: ubuntu-latest
+    needs: test-and-build-app
+
+    steps:
+      - name: 'Check out code'
+        uses: actions/checkout@v4
+
+      - name: 'Download app artifact'
+        uses: actions/download-artifact@v4
+        with:
+          name: app
+          path: deployments/build
+
+      - name: 'Extract app artifact'
+        working-directory: deployments/build
+        run: tar xvzf app.tgz
+
+      - name: 'Install Pack (https://buildpacks.io/)'
         run: |
           sudo add-apt-repository ppa:cncf-buildpacks/pack-cli
           sudo apt-get update
           sudo apt-get install pack-cli
 
-      - name: Build app container
+      - name: 'Build app container'
         run: |
           npm install
-          npx jake deployments:app
+          npx jake deployments:app-container
 
-      - name: Save app artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: app
-          path: deployments/build/app.tgz
-
-      - name: Save app container
+      - name: 'Save app container'
         uses: actions/upload-artifact@v3
         with:
           name: app-container

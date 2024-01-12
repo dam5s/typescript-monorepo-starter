@@ -1,6 +1,7 @@
 {
     "name": "root",
     "devDependencies": {
+        "@types/pg": "^8.10.9",
         "@typescript-eslint/eslint-plugin": "^6.17.0",
         "@typescript-eslint/parser": "^6.17.0",
         "eslint": "^8.56.0",
@@ -10,6 +11,7 @@
         "typescript": "^5.3.3"
     },
     "dependencies": {
+        "pg": "^8.11.3",
         "schemawax": "^1.0.12",
         "ts-pattern": "^5.0.6"
     }

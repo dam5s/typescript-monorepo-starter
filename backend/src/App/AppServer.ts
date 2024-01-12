@@ -1,4 +1,5 @@
 import * as Hapi from '@hapi/hapi';
+import {match} from 'ts-pattern';
 
 type ServerOptions = {
     readonly port: number,
@@ -13,6 +14,19 @@ const create = (options: ServerOptions) => {
     });
 
     server.route(options.routes.slice());
+
+    server.ext({
+        type: 'onPreResponse',
+        method: (request, h) => {
+
+            match(request.response)
+                .with({isBoom: true}, (boom) => {
+                    console.error('There was an exception', boom);
+                });
+
+            return h.continue;
+        },
+    });
 
     return server;
 };

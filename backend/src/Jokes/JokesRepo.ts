@@ -13,7 +13,7 @@ export declare namespace JokesRepo {
 
 export type JokesRepo = {
     readonly random: () => Promise<JokesRepo.Record>
-    readonly add: (fields: JokesRepo.Fields) => Promise<JokesRepo.Record>
+    readonly create: (fields: JokesRepo.Fields) => Promise<JokesRepo.Record>
     readonly find: (id: number) => Promise<JokesRepo.Record | null>
     readonly findAll: () => Promise<readonly JokesRepo.Record[]>
     readonly search: (query: string) => Promise<readonly JokesRepo.Record[]>
@@ -31,7 +31,7 @@ const create = (db: DatabaseGateway): JokesRepo => {
     return {
         random: async () =>
             db.queryOne('select * from jokes order by random() limit 1', jokeRecordDecoder),
-        add: async fields =>
+        create: async fields =>
             db.queryOne('insert into jokes (content) values ($1) returning *', jokeRecordDecoder, [fields.content]),
         find: async (id: number) =>
             db.tryQueryOne('select * from jokes where id = $1', jokeRecordDecoder, [id]),

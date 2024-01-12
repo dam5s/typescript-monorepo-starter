@@ -9,20 +9,22 @@ describe('JokesApi', () => {
     let server: Server;
     let repo: JokesRepo;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         db = testDatabase.gateway();
         repo = jokesRepo.create(db);
         server = appServer.create({
             port: 0,
             routes: jokesApi.routes({jokes: repo}),
         });
-
-        await db.clear();
-        await db.execute("insert into jokes (id, content) values (1, 'Joke #1')");
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
         await db.close();
+    });
+
+    beforeEach(async () => {
+        await db.clear();
+        await db.execute("insert into jokes (id, content) values (1001, 'Joke #1')");
     });
 
     test('GET /api/jokes/random', async () => {
@@ -34,7 +36,7 @@ describe('JokesApi', () => {
         expect(response.statusCode).toEqual(200);
         expect(JSON.parse(response.payload)).toEqual({
             data: {
-                id: '1',
+                id: '1001',
                 content: 'Joke #1',
             },
         });
@@ -62,7 +64,7 @@ describe('JokesApi', () => {
     });
 
     test('GET /api/jokes', async () => {
-        await db.execute("insert into jokes (id, content) values (2, 'Joke #2')");
+        await db.execute("insert into jokes (id, content) values (1002, 'Joke #2')");
 
         const response = await server.inject({
             method: 'GET',
@@ -72,14 +74,14 @@ describe('JokesApi', () => {
         expect(response.statusCode).toEqual(200);
         expect(JSON.parse(response.payload)).toEqual({
             data: [
-                {id: '1', content: 'Joke #1'},
-                {id: '2', content: 'Joke #2'},
+                {id: '1001', content: 'Joke #1'},
+                {id: '1002', content: 'Joke #2'},
             ],
         });
     });
 
     test('GET /api/jokes?search={search}', async () => {
-        await db.execute("insert into jokes (id, content) values (2, 'Another Joke')");
+        await db.execute("insert into jokes (id, content) values (1002, 'Another Joke')");
 
         const response = await server.inject({
             method: 'GET',
@@ -89,23 +91,23 @@ describe('JokesApi', () => {
         expect(response.statusCode).toEqual(200);
         expect(JSON.parse(response.payload)).toEqual({
             data: [
-                {id: '2', content: 'Another Joke'},
+                {id: '1002', content: 'Another Joke'},
             ],
         });
     });
 
     test('GET /api/jokes/{id}', async () => {
-        await db.execute("insert into jokes (id, content) values (2, 'Joke #2')");
+        await db.execute("insert into jokes (id, content) values (1002, 'Joke #2')");
 
         const response = await server.inject({
             method: 'GET',
-            url: 'http://localhost:3001/api/jokes/2',
+            url: 'http://localhost:3001/api/jokes/1002',
         });
 
         expect(response.statusCode).toEqual(200);
         expect(JSON.parse(response.payload)).toEqual({
             data: {
-                id: '2',
+                id: '1002',
                 content: 'Joke #2',
             },
         });

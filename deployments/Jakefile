@@ -1,6 +1,6 @@
 const {desc, task} = require('jake');
 const {run} = require('../build-support/Run');
-const fs = require('fs');
+const fs = require('fs/promises');
 const path = require('path');
 
 const projectDir = __dirname;
@@ -11,13 +11,13 @@ const frontendDist = path.join(rootDir, 'frontend', 'dist')
 const backendProjectDir = path.join(rootDir, 'backend')
 const backendDist = path.join(backendProjectDir, 'dist')
 
-task('clean', () => {
-    fs.rmSync(appBuildDir, {recursive: true, force: true})
-    fs.mkdirSync(appBuildDir, {recursive: true});
+task('clean', async () => {
+    await fs.rm(appBuildDir, {recursive: true, force: true})
+    await fs.mkdir(appBuildDir, {recursive: true});
 });
 
-const buildPackageJson = () => {
-    const rootPackageJsonString = fs.readFileSync(path.join(rootDir, 'package.json'), {encoding: 'utf-8'});
+const buildPackageJson = async () => {
+    const rootPackageJsonString = await fs.readFile(path.join(rootDir, 'package.json'), {encoding: 'utf-8'});
     const rootPackageJson = JSON.parse(rootPackageJsonString)
     const newPackageJson = {
         dependencies: rootPackageJson['dependencies'],
@@ -28,22 +28,27 @@ const buildPackageJson = () => {
     }
     const newPackageJsonString = JSON.stringify(newPackageJson);
 
-    fs.writeFileSync(path.join(appBuildDir, 'package.json'), newPackageJsonString)
+    await fs.writeFile(path.join(appBuildDir, 'package.json'), newPackageJsonString)
 };
 
-task('app-container-only', async () => {
-    fs.cpSync(path.join(projectDir, 'app'), path.join(appBuildDir), {recursive: true})
+task('app-artifact', async () =>{
+    await fs.cp(path.join(projectDir, 'app'), path.join(appBuildDir), {recursive: true});
+    await fs.cp(path.join(projectDir, 'app'), path.join(appBuildDir), {recursive: true});
+    await fs.cp(frontendDist, path.join(appBuildDir, 'frontend'), {recursive: true});
+    await fs.cp(backendDist, path.join(appBuildDir, 'backend'), {recursive: true});
 
-    fs.cpSync(frontendDist, path.join(appBuildDir, 'frontend'), {recursive: true})
+    await buildPackageJson();
 
-    fs.cpSync(backendDist, path.join(appBuildDir, 'backend'), {recursive: true})
+    await fs.cp(path.join(rootDir, 'package-lock.json'), path.join(appBuildDir, 'package-lock.json'));
+    await fs.cp(path.join(backendProjectDir, 'package.json'), path.join(appBuildDir, 'backend', 'package.json'));
+    await fs.cp(path.join(backendProjectDir, 'package-lock.json'), path.join(appBuildDir, 'backend', 'package-lock.json'));
 
-    buildPackageJson();
+    process.chdir(buildDir)
 
-    fs.cpSync(path.join(rootDir, 'package-lock.json'), path.join(appBuildDir, 'package-lock.json'))
-    fs.cpSync(path.join(backendProjectDir, 'package.json'), path.join(appBuildDir, 'backend', 'package.json'))
-    fs.cpSync(path.join(backendProjectDir, 'package-lock.json'), path.join(appBuildDir, 'backend', 'package-lock.json'))
+    await run('tar czf app.tgz app');
+});
 
+task('app-container', async () => {
     await run('pack build starter-app ' +
         `--path ${appBuildDir} ` +
         '--env BP_NODE_VERSION=20 ' +
@@ -56,9 +61,8 @@ task('app-container-only', async () => {
 
     process.chdir(buildDir)
 
-    await run('tar czf app.tgz app')
     await run(`docker save starter-app:latest | gzip > app-container.tgz`)
 });
 
 desc('deployments - create app container')
-task('app', ['frontend:build', 'backend:build', 'app-container-only']);
+task('app', ['frontend:build', 'backend:build', 'app-artifact', 'app-container']);

@@ -1,11 +1,15 @@
 const {fail, task, desc} = require('jake');
 const {cpus} = require('os');
 const {run, npm, npx} = require('../build-support/Run');
+const {Pool} = require('pg');
+
 
 const projectDir = __dirname;
 const databaseUser = 'ts_monorepo_db_user';
 const databasePassword = 'secret';
 const devDatabase = 'ts_monorepo_db_dev';
+const databaseHost = () => process.env['DB_HOST'] || 'localhost';
+
 
 /**
  * @param {string} name
@@ -46,23 +50,8 @@ const localDatabases = () => {
  * @param {string} name
  * @returns {string}
  */
-const databaseUrl = (name) =>
-    `postgres://${databaseUser}:${databasePassword}@localhost/${name}`
-
-/**
- * @param {string} sql - sql command to run as postgres
- * @returns {Promise<void>}
- */
-const runSql = (sql) =>
-    run(`psql -U postgres -c "${sql}"`);
-
-/**
- * @param {string} name - name of the database to create
- * @returns {Promise<void>}
- */
-const createDb = async (name) => {
-    await runSql(`create database ${name}`);
-    await runSql(`grant all privileges on database ${name} to ${databaseUser}`);
+const databaseUrl = (name) => {
+    return `postgres://${databaseUser}:${databasePassword}@${databaseHost()}/${name}`
 }
 
 task('fromProjectDir', () => process.chdir(projectDir));
@@ -72,17 +61,30 @@ task('install', ['fromProjectDir'], () => npm('install'));
 
 desc('database - create local databases');
 task('create', async () => {
-    const databases = localDatabases();
+    const db = new Pool({
+        user: 'postgres',
+        database: 'postgres',
+        password: process.env['PGPASSWORD'],
+        port: 5432,
+        host: databaseHost(),
+    })
 
-    for (const db of databases) {
-        await runSql(`drop database if exists ${db}`);
-    }
+    try {
+        const databaseNames = localDatabases();
 
-    await runSql(`drop user if exists ${databaseUser}`);
-    await runSql(`create user ${databaseUser} with password '${databasePassword}'`);
+        for (const dbName of databaseNames) {
+            await db.query(`drop database if exists ${dbName}`);
+        }
 
-    for (const db of databases) {
-        await createDb(db);
+        await db.query(`drop user if exists ${databaseUser}`);
+        await db.query(`create user ${databaseUser} with password '${databasePassword}'`);
+
+        for (const dbName of databaseNames) {
+            await db.query(`create database ${dbName}`);
+            await db.query(`grant all privileges on database ${dbName} to ${databaseUser}`);
+        }
+    } finally {
+        await db.end();
     }
 });
 
