@@ -4,35 +4,38 @@ import {appServer} from '../../App';
 
 describe('TypedRoute', () => {
 
-    const server = appServer.create({routes: [
-        typedRoute.post('/tenant/{tenantId}/session', {
-            decoders: {
-                body: schema.object({
-                    required: {
-                        username: schema.string,
-                        password: schema.string,
-                    },
-                }),
-                query: schema.object({
-                    required: {
-                        redirect: schema.string,
-                    },
-                }),
-                path: schema.object({
-                    required: {
-                        tenantId: decoders.stringToInt,
-                    },
-                }),
-            },
-            handler: ({body, query, path}, {h}) =>
-                h.response({
-                    username: body.username,
-                    password: body.password,
-                    redirect: query.redirect,
-                    tenantId: path.tenantId,
-                }),
-        }),
-    ]});
+    const server = appServer.create({
+        port: 0,
+        routes: [
+            typedRoute.post('/tenant/{tenantId}/session', {
+                decoders: {
+                    body: schema.object({
+                        required: {
+                            username: schema.string,
+                            password: schema.string,
+                        },
+                    }),
+                    query: schema.object({
+                        required: {
+                            redirect: schema.string,
+                        },
+                    }),
+                    path: schema.object({
+                        required: {
+                            tenantId: decoders.stringToInt,
+                        },
+                    }),
+                },
+                handler: ({body, query, path}, {h}) =>
+                    h.response({
+                        username: body.username,
+                        password: body.password,
+                        redirect: query.redirect,
+                        tenantId: path.tenantId,
+                    }),
+            }),
+        ],
+    });
 
     const validBody = {username: 'bob', password: 'secret'};
 

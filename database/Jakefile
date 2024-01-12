@@ -1,36 +1,104 @@
-const {fail, task, namespace, desc} = require('jake');
+const {fail, task, desc} = require('jake');
+const {cpus} = require('os');
 const {run, npm, npx} = require('../build-support/Run');
-const path = require('path');
 
 const projectDir = __dirname;
-const srcDir = path.join(projectDir, 'src');
+const databaseUser = 'ts_monorepo_db_user';
+const databasePassword = 'secret';
+const devDatabase = 'ts_monorepo_db_dev';
+
+/**
+ * @param {string} name
+ * @returns {number | null}
+ */
+const tryGetIntFromEnv = (name) => {
+    const stringValue = process.env[name];
+    if (!stringValue) {
+        return null;
+    }
+
+    const intValue = parseInt(stringValue);
+    if (isNaN(intValue)) {
+        return null;
+    }
+
+    return intValue;
+}
+
+/**
+ * @returns {Array<string>}
+ */
+const localDatabases = () => {
+    const defaultJestMaxWorkers = () => cpus().length - 1;
+    const envMaxWorkers = tryGetIntFromEnv('JEST_MAX_WORKERS');
+    const maxWorkers = envMaxWorkers || defaultJestMaxWorkers();
+
+    const databases = [devDatabase];
+
+    for (let i = 0; i < maxWorkers; i ++) {
+        databases.push(`ts_monorepo_db_tests_${i + 1}`);
+    }
+
+    return databases;
+}
 
 /**
  * @param {string} name
  * @returns {string}
  */
-const srcFile = (name) => path.join(srcDir, name)
+const databaseUrl = (name) =>
+    `postgres://${databaseUser}:${databasePassword}@localhost/${name}`
+
+/**
+ * @param {string} sql - sql command to run as postgres
+ * @returns {Promise<void>}
+ */
+const runSql = (sql) =>
+    run(`psql -U postgres -c "${sql}"`);
+
+/**
+ * @param {string} name - name of the database to create
+ * @returns {Promise<void>}
+ */
+const createDb = async (name) => {
+    await runSql(`create database ${name}`);
+    await runSql(`grant all privileges on database ${name} to ${databaseUser}`);
+}
 
 task('fromProjectDir', () => process.chdir(projectDir));
 
-desc('database - install dependencies')
+desc('database - install dependencies');
 task('install', ['fromProjectDir'], () => npm('install'));
 
-desc('database - create local databases')
-task('create', () => run(`psql postgres -f ${srcFile('create_local_databases.sql')}`));
+desc('database - create local databases');
+task('create', async () => {
+    const databases = localDatabases();
 
-namespace('migrate', () => {
-    desc('database - migrate tests database')
-    task('tests', ['fromProjectDir'], () => npx('db-migrate up -e tests'));
+    for (const db of databases) {
+        await runSql(`drop database if exists ${db}`);
+    }
 
-    desc('database - migrate dev database')
-    task('dev', ['fromProjectDir'], () => npx('db-migrate up -e dev'));
+    await runSql(`drop user if exists ${databaseUser}`);
+    await runSql(`create user ${databaseUser} with password '${databasePassword}'`);
+
+    for (const db of databases) {
+        await createDb(db);
+    }
 });
 
-desc('database - migrate local (dev and tests) databases')
-task('migrate', ['install', 'migrate:tests', 'migrate:dev']);
+desc('database - migrate local databases');
+task('migrate', ['install'], async () => {
+    for (const database of localDatabases()) {
+        await npx('db-migrate up', {DATABASE_URL: databaseUrl(database)});
+    }
+});
 
-desc('database - create new migration')
+desc('database - load seed data into dev database');
+task('seed', ['fromProjectDir'], async () => {
+    await run(`psql -U ${databaseUser} -f src/seed.sql ${devDatabase}`);
+});
+
+desc('database - create new migration');
 task('new-migration', ['fromProjectDir'], async (name) => {
     if (name === undefined) {
         fail('Expected name of migration passed as argument');

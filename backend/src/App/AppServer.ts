@@ -1,18 +1,9 @@
 import * as Hapi from '@hapi/hapi';
-import {jokesApi} from '../Jokes';
-import {healthApi} from './HealthApi';
 
-const defaultRoutes = [
-    healthApi.route(),
-    jokesApi.routes(),
-].flat();
-
-const defaultOptions = {
-    port: 3001,
-    routes: defaultRoutes,
+type ServerOptions = {
+    readonly port: number,
+    readonly routes: readonly Hapi.ServerRoute[],
 };
-
-type ServerOptions = typeof defaultOptions;
 
 const create = (options: ServerOptions) => {
 
@@ -21,11 +12,11 @@ const create = (options: ServerOptions) => {
         host: '0.0.0.0',
     });
 
-    server.route(options.routes);
+    server.route(options.routes.slice());
 
     return server;
 };
 
 export const appServer = {
-    create: (options: Partial<ServerOptions>) => create({...defaultOptions, ...options}),
+    create,
 };

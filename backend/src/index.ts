@@ -1,9 +1,10 @@
-import {appServer, env} from './App';
+import {appRoutes, appServer, env} from './App';
 
 
 const init = async () => {
     const server = appServer.create({
         port: env.tryGetNumber('PORT', 3001),
+        routes: appRoutes.build(),
     });
     await server.start();
     console.log('Server running on %s', server.info.uri);

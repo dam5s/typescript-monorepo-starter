@@ -1,47 +1,47 @@
-import {jokesData} from './JokesData';
+import * as schema from 'schemawax';
+import {DatabaseGateway} from '../DatabaseSupport';
 
-export type JokeFields = {
-    readonly joke: string
+export declare namespace JokesRepo {
+
+    type Fields = {
+        readonly content: string
+    }
+
+    type Record =
+        Fields & { readonly id: string }
 }
-
-export type JokeRecord =
-    JokeFields & { readonly id: number }
 
 export type JokesRepo = {
-    readonly random: () => Promise<JokeRecord>
-    readonly add: (fields: JokeFields) => Promise<JokeRecord>
-    readonly find: (id: number) => Promise<JokeRecord|undefined>
-    readonly findAll: () => Promise<readonly JokeRecord[]>
-    readonly search: (query: string) => Promise<readonly JokeRecord[]>
+    readonly random: () => Promise<JokesRepo.Record>
+    readonly add: (fields: JokesRepo.Fields) => Promise<JokesRepo.Record>
+    readonly find: (id: number) => Promise<JokesRepo.Record | null>
+    readonly findAll: () => Promise<readonly JokesRepo.Record[]>
+    readonly search: (query: string) => Promise<readonly JokesRepo.Record[]>
 }
 
-const create = (initialJokes: readonly JokeRecord[] = jokesData): JokesRepo => {
-    // eslint-disable-next-line functional/prefer-readonly-type
-    const jokes: JokeRecord[] = initialJokes.slice();
+const jokeRecordDecoder: schema.Decoder<JokesRepo.Record> =
+    schema.object({
+        required: {
+            id: schema.string,
+            content: schema.string,
+        },
+    });
 
+const create = (db: DatabaseGateway): JokesRepo => {
     return {
-        random: async () => {
-            const index = Math.floor(Math.random() * jokes.length);
-            return jokes[index];
-        },
-        add: async fields => {
-            const lastJoke = jokes[jokes.length - 1];
-            const newJoke = {...fields, id: lastJoke.id + 1};
-            jokes.push(newJoke);
-            return newJoke;
-        },
+        random: async () =>
+            db.queryOne('select * from jokes order by random() limit 1', jokeRecordDecoder),
+        add: async fields =>
+            db.queryOne('insert into jokes (content) values ($1) returning *', jokeRecordDecoder, [fields.content]),
         find: async (id: number) =>
-            jokes.find(it => it.id === id),
+            db.tryQueryOne('select * from jokes where id = $1', jokeRecordDecoder, [id]),
         findAll: async () =>
-            jokes.slice(),
+            db.queryMany('select * from jokes', jokeRecordDecoder),
         search: async (query: string) =>
-            jokes.slice().filter(it => it.joke.includes(query)),
+            db.queryMany('select * from jokes where content ilike $1', jokeRecordDecoder, [`%${query}%`]),
     };
 };
 
-const singleton = create();
-
 export const jokesRepo = {
     create,
-    singleton,
 };
