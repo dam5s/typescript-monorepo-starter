@@ -20,7 +20,7 @@ const create = (options: ServerOptions) => {
         method: (request, h) => {
 
             match(request.response)
-                .with({isBoom: true}, (boom) => {
+                .with({isBoom: true, output: {statusCode: 500}}, (boom) => {
                     console.error('There was an exception', boom);
                 });
 
