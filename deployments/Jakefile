@@ -23,12 +23,12 @@ const buildPackageJson = async () => {
         dependencies: rootPackageJson['dependencies'],
         scripts: {
             installBackend: 'npm --prefix backend clean-install',
-            start: 'node backend/index.js'
+            start: 'node backend/index.js',
         },
     }
     const newPackageJsonString = JSON.stringify(newPackageJson);
 
-    await fs.writeFile(path.join(appBuildDir, 'package.json'), newPackageJsonString)
+    await fs.writeFile(path.join(appBuildDir, 'package.json'), newPackageJsonString);
 };
 
 task('app-artifact', async () =>{
@@ -43,7 +43,7 @@ task('app-artifact', async () =>{
     await fs.cp(path.join(backendProjectDir, 'package.json'), path.join(appBuildDir, 'backend', 'package.json'));
     await fs.cp(path.join(backendProjectDir, 'package-lock.json'), path.join(appBuildDir, 'backend', 'package-lock.json'));
 
-    process.chdir(buildDir)
+    process.chdir(buildDir);
 
     await run('tar czf app.tgz app');
 });
@@ -59,10 +59,10 @@ task('app-container', async () => {
         '--buildpack gcr.io/paketo-buildpacks/node-run-script '
     );
 
-    process.chdir(buildDir)
+    process.chdir(buildDir);
 
-    await run(`docker save starter-app:latest | gzip > app-container.tgz`)
+    await run(`docker save starter-app:latest | gzip > app-container.tgz`);
 });
 
-desc('deployments - create app container')
+desc('deployments - create app container');
 task('app', ['frontend:build', 'backend:build', 'app-artifact', 'app-container']);

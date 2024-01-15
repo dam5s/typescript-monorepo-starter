@@ -6,4 +6,4 @@ namespace('deployments', () => require('./deployments/Jakefile'));
 namespace('db', () => require('./database/Jakefile'));
 
 task('build', ['backend:build', 'frontend:build']);
-task('default', ['build'])
+task('default', ['build']);
